@@ -2,7 +2,7 @@
   "name": "test-react",
   "version": "0.1.0",
   "private": true,
-  "homepage": "http://miketonny.github.io/test-react",
+  "homepage": "https://miketonny.github.io/react-demo",
   "dependencies": {
     "axios": "^0.18.0",
     "react": "^16.4.0",
