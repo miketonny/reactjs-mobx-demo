@@ -143,7 +143,6 @@ class DataModel {
                 'Content-Type': 'application/json'
             },
             method: method,
-            mode: 'CORS',
             body: JSON.stringify(aths)
         }).then(res => console.log(res)).catch(err => console.log(err));
     }
