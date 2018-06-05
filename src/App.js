@@ -132,10 +132,6 @@ class App extends Component {
     let columns = this.state.dataColumns.slice();
     let col = columns.find(c => c.title === colHead);
     if (col === 'undefined') return; 
-    //disable the toggle button 
-    if (toggle === 'start') col.startDisabled = true;
-    else col.stopDisabled = true;
-    this.setState({dataColumns: columns}, () => { //disable buttons first
         //proceed to work on ajax side..
         //1) fetch the current selected rows from user
         let selectedRows = rows.filter((r) => r.select === true); 
@@ -149,8 +145,7 @@ class App extends Component {
             //split do both updates and create...
             //get updated first...
             this.updateSplitStatus(selectedRows, colHead, toggle, col, rows);
-        }
-    });  
+        } 
   }
     
   //3) render UI to reflect button toggles to user after successfully updated the status via API
@@ -170,7 +165,7 @@ class App extends Component {
             }
         }
     });
-    //4) update data rows and save to localstorage..
+    //4) update data rows and save to localstorage.. 
     this.setState({ dataRows: rows }, () => localStorage.setItem('dataRows', JSON.stringify(this.state.dataRows)));
   }
 
@@ -193,8 +188,15 @@ class App extends Component {
           updatedAths.push({ id: ath.id, period: { id: period.id, startTime: period.startTime, endTime: period.endTime, type: period.type } });
       });
       // run API ===============================================================
-      if (updatedAths.length > 0) { DataModel.updatePeriods(updatedAths, 'PUT').then(() => {
-        this.changeTrimSplitStatus(selectedRows, colHead, toggle, col, rows); //update UI
+      if (updatedAths.length > 0) { 
+        //disable the toggle buttons
+        col.is_processing = true; 
+        this.forceUpdate(); //disable buttons first
+        //api call ======================================================
+        DataModel.updatePeriods(updatedAths, 'PUT').then(() => {
+            col.is_processing = false;
+            this.forceUpdate(); //enable buttons afterwards
+            this.changeTrimSplitStatus(selectedRows, colHead, toggle, col, rows); //update UI
       }).catch(err => {
         console.log(err); //update failed to API
       }); }
@@ -236,16 +238,26 @@ class App extends Component {
 
       //run API ===============================================================
       if (updatedAths.length > 0) { 
-          DataModel.updatePeriods(updatedAths, 'PUT').then((res) => {
-              console.log(res);
-            this.changeTrimSplitStatus(selectedRows, colHead, toggle, col, rows); //update UI
-          }).catch(err => console.log(err)); 
+            //disable the toggle buttons
+            col.is_processing = true; 
+            this.setState({dataColumns: this.state.columns}); //disable buttons first
+            DataModel.updatePeriods(updatedAths, 'PUT').
+            then(() => { 
+                col.is_processing = false;
+                this.forceUpdate(); //enable buttons afterwards
+                this.changeTrimSplitStatus(selectedRows, colHead, toggle, col, rows); //update UI
+            }).catch(err => console.log(err)); 
         }
       if (newPeriodsAths.length > 0) { 
-          DataModel.updatePeriods(newPeriodsAths, 'POST').then((res)=> {
-            console.log(res);
-            this.changeTrimSplitStatus(selectedRows, colHead, toggle, col, rows); //update UI
-          }).catch(err => console.log(err)); 
+            //disable the toggle buttons
+            col.is_processing = true; 
+            this.setState({dataColumns: this.state.columns}); //disable buttons first
+            DataModel.updatePeriods(newPeriodsAths, 'POST').
+            then(()=> { 
+                col.is_processing = false;
+                this.forceUpdate(); //enable buttons afterwards
+                this.changeTrimSplitStatus(selectedRows, colHead, toggle, col, rows); //update UI
+            }).catch(err => console.log(err)); 
         }
   }
 

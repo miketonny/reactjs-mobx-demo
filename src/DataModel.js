@@ -32,12 +32,13 @@ class DataModel {
 
     getDataColumns() {
         //1. fetch columns from local storage..
-        let columns = this.columns;
+        let columns = this.columns;     
         if (columns === null && this.athletes.length === 0) return null; //no athletes 
+        if (!columns) columns = [];
         if (columns.length === 0) {
             //init columns ... 
-            columns.push({ 'title': 'select', 'type': '', 'show': true, 'startDisabled':false, 'stopDisabled':false });
-            columns.push({ 'title': 'name', 'type': '', 'show': true, 'startDisabled':false, 'stopDisabled':false });
+            columns.push({ 'title': 'select', 'type': '', 'show': true, 'is_processing': false });
+            columns.push({ 'title': 'name', 'type': '', 'show': true, 'is_processing': false });
         }
         //2. getting all the unique columns from data retrieved from api .....................
         this.athletes.forEach((ath) => {
@@ -46,7 +47,7 @@ class DataModel {
                 if (p.type.toLowerCase() === 'trim' && i !== 0) {
                     show = false; //initially only the first trim period is shown, rest arent..
                 }
-                return { 'title': p.name, 'type': p.type.toLowerCase(), 'show': show }
+                return { 'title': p.name, 'type': p.type.toLowerCase(), 'show': show, 'is_processing': false }
             })); //get unique period names...
             //3. add new column into column list..
             periods.forEach((p) => {

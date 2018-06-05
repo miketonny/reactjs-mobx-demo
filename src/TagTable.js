@@ -73,8 +73,8 @@ class TagTable extends Component{
                                     {cols.filter((c,k)=> k>1).map((c,k)=>{  
                                            let colIndx = k+2; //k starts at 0 again, trim/split start at 2..
                                            if(!c.show) {return null;}
-                                           return <td key={colIndx}><ToggleButton text='start' disabled = {c.startDisabled}  colHead={cols[colIndx].title} toggle={this.startStop.bind(this)}>start</ToggleButton>
-                                           <ToggleButton  text='stop' disabled = {c.stopDisabled} colHead={cols[colIndx].title} toggle={this.startStop.bind(this)}/></td>;
+                                           return <td key={colIndx}><ToggleButton text='start' disabled = {c.is_processing}  colHead={cols[colIndx].title} toggle={this.startStop.bind(this)}>start</ToggleButton>
+                                           <ToggleButton  text='stop' disabled = {c.is_processing} colHead={cols[colIndx].title} toggle={this.startStop.bind(this)}/></td>;
                                     })}                                
                                 </tr>
                             }else{
