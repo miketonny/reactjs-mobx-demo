@@ -8,9 +8,9 @@ class ToggleButton extends Component{
     }
     render(){
         if(this.props.text==='start'){
-            return <button className="btn toggle-button" onClick={this.handleClick.bind(this)}><i className="fas fa-play"></i></button>
+            return <button className="btn toggle-button" onClick={this.handleClick.bind(this)} disabled={this.props.disabled}><i className="fas fa-play"></i></button>
         }else{
-            return <button className="btn toggle-button" onClick={this.handleClick.bind(this)}><i className="fas fa-stop"></i></button>
+            return <button className="btn toggle-button" onClick={this.handleClick.bind(this)} disabled={this.props.disabled}><i className="fas fa-stop"></i></button>
         } 
     }
 }
@@ -73,8 +73,8 @@ class TagTable extends Component{
                                     {cols.filter((c,k)=> k>1).map((c,k)=>{  
                                            let colIndx = k+2; //k starts at 0 again, trim/split start at 2..
                                            if(!c.show) {return null;}
-                                           return <td key={colIndx}><ToggleButton text='start'   colHead={cols[colIndx].title} toggle={this.startStop.bind(this)}>start</ToggleButton>
-                                           <ToggleButton  text='stop'  colHead={cols[colIndx].title} toggle={this.startStop.bind(this)}/></td>;
+                                           return <td key={colIndx}><ToggleButton text='start' disabled = {c.startDisabled}  colHead={cols[colIndx].title} toggle={this.startStop.bind(this)}>start</ToggleButton>
+                                           <ToggleButton  text='stop' disabled = {c.stopDisabled} colHead={cols[colIndx].title} toggle={this.startStop.bind(this)}/></td>;
                                     })}                                
                                 </tr>
                             }else{

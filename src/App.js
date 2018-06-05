@@ -126,51 +126,51 @@ class App extends Component {
 
   //start & stop a trim or split, depending on the type, do post or put to either create/update trim/splits============================
   startStop(colHead, toggle) {
-      //if the session already stopped, then prevent any modification to splits/trims
-      if (this.sessionStopped()) return;
-      let rows = this.state.dataRows.slice();
-      let col = this.state.dataColumns.find(c => c.title === colHead);
-      if (col === 'undefined') return; 
-      //1) fetch the current selected rows from user
-      let selectedRows = rows.filter((r) => r.select === true);
-      //2) update UI to reflect button toggles to user 
-      //UI is updated instantly here, to prevent confusion if API response took too long to return etc..
-      //if API returned response failed, UI should be switched back to previous state in next cycle.
-      selectedRows.forEach((r) => {
-          if (toggle === 'start') {
-              if (col.type === 'trim' && r[colHead] === 'Stopped') {
-                  //do nothing..
-              } else {
-                  r[colHead] = 'Running';
-              }
-          } else {
-              if (r[colHead] !== 'Not Started') {
-                  r[colHead] = 'Stopped';
-              }
-          }
-      });
-      //3) update data rows and save to localstorage..
-      this.setState({ dataRows: rows }, () => localStorage.setItem('dataRows', JSON.stringify(this.state.dataRows)));
-      //4) send API request to update the new/updated trim/split to database       ==============================
-      if (col.type === 'trim') {
-          //5.1) processing Trims ======================================
-          //trim only do updates..
-          this.updateTrimStatus(selectedRows, colHead, toggle);
-
-      } else {
-          //5.2) process splits ================================================================
-          //split do both updates and create...
-          //get updated first...
-          try{
-            this.updateSplitStatus(selectedRows, colHead, toggle);
-          }catch(err){
-            console.log(err);
-          }
-
-      }
+    //if the session already stopped, then prevent any modification to splits/trims
+    if (this.sessionStopped()) return;
+    let rows = this.state.dataRows.slice();
+    let col = this.state.dataColumns.find(c => c.title === colHead);
+    if (col === 'undefined') return; 
+    //disable the toggle button 
+    if (toggle === 'start') col.startDisabled = true;
+    else col.stopDisabled = true;
+    //1) fetch the current selected rows from user
+    let selectedRows = rows.filter((r) => r.select === true); 
+    //2) send API request to update the new/updated trim/split to database       ==============================
+    if (col.type === 'trim') {
+        //2.1) processing Trims ======================================
+        //trim only do updates..
+       this.updateTrimStatus(selectedRows, colHead, toggle, col, rows);
+    } else {
+        //2.2) process splits ================================================================
+        //split do both updates and create...
+        //get updated first...
+        this.updateSplitStatus(selectedRows, colHead, toggle, col, rows);
+    }
+  }
+    
+  //3) render UI to reflect button toggles to user after successfully updated the status via API
+  changeTrimSplitStatus(selectedRows, colHead, toggle, col, rows){
+    //UI is updated instantly here, to prevent confusion if API response took too long to return etc..
+    //if API returned response failed, UI should be switched back to previous state in next cycle.
+    selectedRows.forEach((r) => {
+        if (toggle === 'start') {
+            if (col.type === 'trim' && r[colHead] === 'Stopped') {
+                //do nothing..
+            } else {
+                r[colHead] = 'Running';
+            }
+        } else {
+            if (r[colHead] !== 'Not Started') {
+                r[colHead] = 'Stopped';
+            }
+        }
+    });
+    //4) update data rows and save to localstorage..
+    this.setState({ dataRows: rows }, () => localStorage.setItem('dataRows', JSON.stringify(this.state.dataRows)));
   }
 
-  updateTrimStatus(selectedRows, colHead, toggle) {
+  updateTrimStatus(selectedRows, colHead, toggle, col, rows) {
       let updatedAths = [];
       selectedRows.forEach((r) => {
           //trim cannot be restarted ======== 
@@ -189,18 +189,21 @@ class App extends Component {
           updatedAths.push({ id: ath.id, period: { id: period.id, startTime: period.startTime, endTime: period.endTime, type: period.type } });
       });
       // run API ===============================================================
-      if (updatedAths.length > 0) { DataModel.updatePeriods(updatedAths, 'PUT'); }
+      if (updatedAths.length > 0) { DataModel.updatePeriods(updatedAths, 'PUT').then(() => {
+        this.changeTrimSplitStatus(selectedRows, colHead, toggle, col, rows); //update UI
+      }).catch(err => {
+        console.log(err); //update failed to API
+      }); }
   }
 
-  updateSplitStatus(selectedRows, colHead, toggle) {
+  updateSplitStatus(selectedRows, colHead, toggle, col, rows) {
       let updatedAths = [], newPeriodsAths = [];
       selectedRows.forEach((r) => {
           let ath = this.state.athletes.find(a => a.id === r.id);
           if (!ath) return;
           let periods = ath.periods.filter(p => p.type === 'split' && p.name === colHead).map((p) => {
               return { id: p.id, startTime: p.startTime, endTime: p.endTime, type: p.type };
-          }); //get all splits with this name under athletes
-          console.log(periods);
+          }); //get all splits with this name under athletes 
           if (periods.length >= 1) {
               //only apply to the last period
               let lastPeriod = periods[periods.length - 1]; //last period under same split name's list..
@@ -216,21 +219,30 @@ class App extends Component {
                   updatedAths.push({ id: ath.id, period: lastPeriod });
               }
           } 
-          // else {
-          //     //split doesnt exist, create new splits==============
-          //     
-          //     if (toggle === 'start') {
-          //         periods[0].startTime = this.getCurrentDateTime();
-          //         newPeriodsAths.push({ id: ath.id, period: periods[0] });
-          //     } else {
-          //         //do nothing, only start time will be recorded when a new split is added and toggled..
-          //     }
-          // }
+          else {
+              //split doesnt exist, create new splits==============
+              if (toggle === 'start') {
+                  let newPeriod = { startTime: this.getCurrentDateTime(), type: 'split', name: colHead };
+                  newPeriodsAths.push({ id: ath.id, newPeriod });
+              } else {
+                  //do nothing, only start time will be recorded when a new split is added and toggled..
+              }
+          }
       });
 
       //run API ===============================================================
-      if (updatedAths.length > 0) { DataModel.updatePeriods(updatedAths, 'PUT'); }
-      if (newPeriodsAths.length > 0) { DataModel.updatePeriods(newPeriodsAths, 'POST'); }
+      if (updatedAths.length > 0) { 
+          DataModel.updatePeriods(updatedAths, 'PUT').then((res) => {
+              console.log(res);
+            this.changeTrimSplitStatus(selectedRows, colHead, toggle, col, rows); //update UI
+          }).catch(err => console.log(err)); 
+        }
+      if (newPeriodsAths.length > 0) { 
+          DataModel.updatePeriods(newPeriodsAths, 'POST').then((res)=> {
+            console.log(res);
+            this.changeTrimSplitStatus(selectedRows, colHead, toggle, col, rows); //update UI
+          }).catch(err => console.log(err)); 
+        }
   }
 
   //hide split from UI
@@ -262,13 +274,13 @@ class App extends Component {
       //2. process selections===============
       if (this.sessionStopped()) return; //check if session still running..
       //check if split name already exist
-      let cols = this.state.dataColumns;
+      let cols = this.state.dataColumns.slice();
       let existingCol = cols.find((c) => c.title === name);
       if (existingCol) { //only add new split column
           return;
       }
       cols.push({ title: name, type: 'split', show: true }); //only split can be added...
-      let rows = this.state.dataRows;
+      let rows = this.state.dataRows.slice();
       //3. set default split status when first added (not started)
       rows.forEach((r) => r[name] = 'Not Started');
       let selectedRows = [];
@@ -286,7 +298,7 @@ class App extends Component {
           newPeriodsAths.push({ id: ath.id, period: { type: 'split', name: name } });//new period//
       });
       //5. create new split on db...
-      DataModel.updatePeriods(newPeriodsAths, 'POST');
+      DataModel.updatePeriods(newPeriodsAths, 'POST').catch((err) => console.log(err));
   }
 
 

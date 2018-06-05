@@ -36,8 +36,8 @@ class DataModel {
         if (columns === null && this.athletes.length === 0) return null; //no athletes 
         if (columns.length === 0) {
             //init columns ... 
-            columns.push({ 'title': 'select', 'type': '', 'show': true });
-            columns.push({ 'title': 'name', 'type': '', 'show': true });
+            columns.push({ 'title': 'select', 'type': '', 'show': true, 'startDisabled':false, 'stopDisabled':false });
+            columns.push({ 'title': 'name', 'type': '', 'show': true, 'startDisabled':false, 'stopDisabled':false });
         }
         //2. getting all the unique columns from data retrieved from api .....................
         this.athletes.forEach((ath) => {
@@ -144,7 +144,7 @@ class DataModel {
             },
             method: method,
             body: JSON.stringify(aths)
-        }).then(res => console.log(res)).catch(err => console.log(err));
+        });
     }
 }
 
