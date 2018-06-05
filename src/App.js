@@ -56,7 +56,7 @@ class App extends Component {
 
   componentDidMount() {
       //api call to fetch athlete data from server DB every 5 sec............  
-      this.intervalId = setInterval(() => this.refresh, 5000);
+      this.intervalId = setInterval(() => this.refresh(), 5000);
   }
 
   //remove interval upon destroy component..
