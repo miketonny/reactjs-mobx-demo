@@ -47,7 +47,7 @@ class TagTable extends Component{
     render(){
         let cols = this.state.dataColumns;
         let rows = this.state.dataRows;
-        return <div className="col-md-9"><table className="table ">
+        return <div className="col-md-10"><table className="table ">
             <thead>
                 <tr>{cols.map((c,i)=>{
                     if(i<2){

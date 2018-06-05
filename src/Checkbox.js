@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 //customized checkboxes, rounded===
 class Checkbox extends React.Component{
-    handleCheck(){ 
+    handleCheck(){
         this.props.onChange(this.props.rowIndex);   
     } 
     render(){
