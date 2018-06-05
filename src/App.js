@@ -200,6 +200,7 @@ class App extends Component {
           let periods = ath.periods.filter(p => p.type === 'split' && p.name === colHead).map((p) => {
               return { id: p.id, startTime: p.startTime, endTime: p.endTime, type: p.type };
           }); //get all splits with this name under athletes
+          console.log(periods);
           if (periods.length >= 1) {
               //only apply to the last period
               let lastPeriod = periods[periods.length - 1]; //last period under same split name's list..
@@ -214,15 +215,17 @@ class App extends Component {
                   lastPeriod.endTime = this.getCurrentDateTime(); //apply end time 
                   updatedAths.push({ id: ath.id, period: lastPeriod });
               }
-          } else {
-              //split doesnt exist, create new splits==============
-              if (toggle === 'start') {
-                  periods[0].startTime = this.getCurrentDateTime();
-                  newPeriodsAths.push({ id: ath.id, period: periods[0] });
-              } else {
-                  //do nothing, only start time will be recorded when a new split is added and toggled..
-              }
-          }
+          } 
+          // else {
+          //     //split doesnt exist, create new splits==============
+          //     
+          //     if (toggle === 'start') {
+          //         periods[0].startTime = this.getCurrentDateTime();
+          //         newPeriodsAths.push({ id: ath.id, period: periods[0] });
+          //     } else {
+          //         //do nothing, only start time will be recorded when a new split is added and toggled..
+          //     }
+          // }
       });
 
       //run API ===============================================================
