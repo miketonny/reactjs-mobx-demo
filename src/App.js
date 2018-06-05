@@ -161,7 +161,11 @@ class App extends Component {
           //5.2) process splits ================================================================
           //split do both updates and create...
           //get updated first...
-          this.updateSplitStatus(selectedRows, colHead, toggle);
+          try{
+            this.updateSplitStatus(selectedRows, colHead, toggle);
+          }catch(err){
+            console.log(err);
+          }
 
       }
   }
