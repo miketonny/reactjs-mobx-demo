@@ -82,9 +82,11 @@
 /* .table{
   border: 0.5px solid black;
 } */
+ 
+.col-md-10{
+  overflow-x:scroll;
+} 
 
-.table {
-  width: auto !important; }
   .table thead .col-sm-3, .table thead .col-sm-6 {
     padding: 0; }
   .table thead > tr {
@@ -93,14 +95,14 @@
       text-align: center;
       padding: 8px 0; }
       .table thead > tr th:first-child {
-        width: 60px; }
+        min-width: 60px !important; }
       .table thead > tr th:nth-child(2) {
-        width: 150px; }
+        min-width: 150px !important; }
       .table thead > tr th:nth-child(n+3) {
         border-top: 0.5px solid black !important;
         border-left: 0.5px solid black !important;
         border-right: 0.5px solid black !important;
-        width: 200px; }
+        min-width: 200px !important; }
   .table tbody tr:first-child {
     background-color: #4E5860; }
     .table tbody tr:first-child td:first-child {

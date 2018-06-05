@@ -351,7 +351,7 @@ class App extends Component {
               ); 
       } 
       return (
-          <div className="row" onClick={this.handleOverlay.bind(this)}>
+          <div className="App row" onClick={this.handleOverlay.bind(this)}>
               <div className="col-md-12">
                   <div className="control-buttons pull-right">
                       <button className="btn" onClick={this.showAll.bind(this)}>Show All</button>
