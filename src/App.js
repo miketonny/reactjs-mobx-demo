@@ -129,24 +129,28 @@ class App extends Component {
     //if the session already stopped, then prevent any modification to splits/trims
     if (this.sessionStopped()) return;
     let rows = this.state.dataRows.slice();
-    let col = this.state.dataColumns.find(c => c.title === colHead);
+    let columns = this.state.dataColumns.slice();
+    let col = columns.find(c => c.title === colHead);
     if (col === 'undefined') return; 
     //disable the toggle button 
     if (toggle === 'start') col.startDisabled = true;
     else col.stopDisabled = true;
-    //1) fetch the current selected rows from user
-    let selectedRows = rows.filter((r) => r.select === true); 
-    //2) send API request to update the new/updated trim/split to database       ==============================
-    if (col.type === 'trim') {
-        //2.1) processing Trims ======================================
-        //trim only do updates..
-       this.updateTrimStatus(selectedRows, colHead, toggle, col, rows);
-    } else {
-        //2.2) process splits ================================================================
-        //split do both updates and create...
-        //get updated first...
-        this.updateSplitStatus(selectedRows, colHead, toggle, col, rows);
-    }
+    this.setState({dataColumns: columns}, () => { //disable buttons first
+        //proceed to work on ajax side..
+        //1) fetch the current selected rows from user
+        let selectedRows = rows.filter((r) => r.select === true); 
+        //2) send API request to update the new/updated trim/split to database       ==============================
+        if (col.type === 'trim') {
+            //2.1) processing Trims ======================================
+            //trim only do updates..
+            this.updateTrimStatus(selectedRows, colHead, toggle, col, rows);
+        } else {
+            //2.2) process splits ================================================================
+            //split do both updates and create...
+            //get updated first...
+            this.updateSplitStatus(selectedRows, colHead, toggle, col, rows);
+        }
+    });  
   }
     
   //3) render UI to reflect button toggles to user after successfully updated the status via API
