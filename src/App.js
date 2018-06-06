@@ -290,16 +290,16 @@ class App extends Component {
       });
       let col = this.data.find(d => d.title === title); //find the column
     //2) send API request to update the new/updated trim/split to database       ==============================
-    if (col.type === ColumnType.Trim) {
-        //2.1) processing Trims ======================================
-        //trim only do updates..
-        this.updateTrimStatus(selectedRows, colHead, toggle, col, rows);
-    } else {
-        //2.2) process splits ================================================================
-        //split do both updates and create...
-        //get updated first...
-        this.updateSplitStatus(selectedRows, colHead, toggle, col, rows);
-    } 
+    // if (col.type === ColumnType.Trim) {
+    //     //2.1) processing Trims ======================================
+    //     //trim only do updates..
+    //     this.updateTrimStatus(selectedRows, colHead, toggle, col, rows);
+    // } else {
+    //     //2.2) process splits ================================================================
+    //     //split do both updates and create...
+    //     //get updated first...
+    //     this.updateSplitStatus(selectedRows, colHead, toggle, col, rows);
+    // } 
   }
 
   handleCheck(rowIndx){
