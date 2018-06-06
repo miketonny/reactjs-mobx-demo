@@ -6,6 +6,8 @@ import GroupBox from './GroupBox';
 import Modal from './Modal';
 import EndTrimForm from './EndTrimForm';
 import DataModel from './DataModel';
+import Table from './Table'; 
+import { ColumnType, ColumnStatus} from './Enum';
  
 class App extends Component {
   constructor(props) {
@@ -25,7 +27,8 @@ class App extends Component {
           currentTrimName: '',
           sessionID: '530243',//hard coded for demo =======
           sessionStatus: 'Running', 
-          loading: true //initial state when component initialised to show loading
+          loading: true, //initial state when component initialised to show loading,
+          data: []
       }
   }
 
@@ -66,8 +69,8 @@ class App extends Component {
   }
 
   refresh() {
-      let model = new DataModel(this.state.dataColumns, this.state.dataRows, this.state.sessionID);
-      model.getAthletes().then(res => {
+      let model = new DataModel(this.state.dataColumns, this.state.dataRows, this.state.sessionID, this.state.data);
+      model.getAthletes().then(res => { 
           model.athletes = res.data;
           model.digestData();
           this.setState({
@@ -77,7 +80,8 @@ class App extends Component {
               PositionalGroups: model.groups,
               StatusGroups: model.statGroups,
               modalGrps: model.modalgrps,
-              loading: false
+              loading: false,
+              data: model.data
           }); 
       }
       );  
@@ -277,6 +281,36 @@ class App extends Component {
       else return false;
   }
 
+  toggleClick(toggle, title){
+      console.log(title);
+      //1 find all selected rows 
+      let selectedRowIndxes = [];
+      this.state.data[0].data.forEach((d, i) => {
+        if(d.select) selectedRowIndxes.push(i);
+      });
+      let col = this.data.find(d => d.title === title); //find the column
+    //2) send API request to update the new/updated trim/split to database       ==============================
+    if (col.type === ColumnType.Trim) {
+        //2.1) processing Trims ======================================
+        //trim only do updates..
+        this.updateTrimStatus(selectedRows, colHead, toggle, col, rows);
+    } else {
+        //2.2) process splits ================================================================
+        //split do both updates and create...
+        //get updated first...
+        this.updateSplitStatus(selectedRows, colHead, toggle, col, rows);
+    } 
+  }
+
+  handleCheck(rowIndx){
+      console.log(rowIndx);
+      let data = this.state.data.slice();
+      data[0].data.forEach(d => {
+        d.select = !d.select;
+      });
+      this.setState({data: data});
+  }
+
 
   /*Modals  ======================================================================================*/
   /*modal add split window ====================================================================== */
@@ -388,8 +422,8 @@ class App extends Component {
               </div>
               <div className="col-md-2"><GroupBox groups={this.state.PositionalGroups} positions={this.state.Positions} statusGrps={this.state.StatusGroups}
                   grpSelected={this.selectedGroupChanged.bind(this)} /></div>
-              <TagTable columns={this.state.dataColumns} rows={this.state.dataRows} goNext={this.endCurrentTrim.bind(this)}
-                  selectAll={this.checkAll.bind(this)} startStopToggle={this.startStop.bind(this)} hideSplit={this.hidingSplit.bind(this)} selectionChanged={this.selectChange.bind(this)} />
+              {/* <TagTable columns={this.state.dataColumns} rows={this.state.dataRows} goNext={this.endCurrentTrim.bind(this)} selectAll={this.checkAll.bind(this)} startStopToggle={this.startStop.bind(this)} hideSplit={this.hidingSpit.bind(this)} selectionChanged={this.selectChange.bind(this)} /> */}
+              <Table columns={this.state.data} handleToggle={this.toggleClick.bind(this)} checkChanged={this.handleCheck.bind(this)} />
               <Modal show={this.state.showAddSplit} children={<Form submit={this.addSplit.bind(this)} splitNames={this.state.splitNames} groups={this.state.modalGrps} />} />
               <Modal show={this.state.showEndTrim} children={<EndTrimForm confirm={this.nextTrim.bind(this)} name={this.state.currentTrimName} />} />
 

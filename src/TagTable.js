@@ -1,19 +1,20 @@
 import React, { Component } from 'react'; 
 import Checkbox from './Checkbox';
 import DataCell from './DataCell';
+import ToggleButton from './ToggleButton';
  
-class ToggleButton extends Component{
-    handleClick(){
-        this.props.toggle(this.props.colHead, this.props.text);
-    }
-    render(){
-        if(this.props.text==='start'){
-            return <button className="btn toggle-button" onClick={this.handleClick.bind(this)} disabled={this.props.disabled}><i className="fas fa-play"></i></button>
-        }else{
-            return <button className="btn toggle-button" onClick={this.handleClick.bind(this)} disabled={this.props.disabled}><i className="fas fa-stop"></i></button>
-        } 
-    }
-}
+// class ToggleButton extends Component{
+//     handleClick(){
+//         this.props.toggle(this.props.colHead, this.props.text);
+//     }
+//     render(){
+//         if(this.props.text==='start'){
+//             return <button className="btn toggle-button" onClick={this.handleClick.bind(this)} disabled={this.props.disabled}><i className="fas fa-play"></i></button>
+//         }else{
+//             return <button className="btn toggle-button" onClick={this.handleClick.bind(this)} disabled={this.props.disabled}><i className="fas fa-stop"></i></button>
+//         } 
+//     }
+// }
 
 class TagTable extends Component{
     constructor(props){

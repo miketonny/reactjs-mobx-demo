@@ -213,3 +213,15 @@
   height: 20px;
   margin-top: 10px;
 }
+
+
+#test-table tbody tr{
+  background-color: transparent; 
+}
+#test-table tbody>tr>td>div:first-child{
+  background-color: black;
+  width: 100px;
+}
+#test-table tbody>tr>td>div:nth-child(n+2){
+  background-color: white !important;
+}
