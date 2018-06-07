@@ -155,7 +155,7 @@
 
 .stopped{
   background-color: #FF6666;
-  border: 1.5px solid #FF0000 !important;   
+  border: 0.5px solid #FF0000 !important;   
 }
 .italic{
   font-style: italic;
@@ -218,10 +218,65 @@
 #test-table tbody tr{
   background-color: transparent; 
 }
-#test-table tbody>tr>td>div:first-child{
-  background-color: black;
-  width: 100px;
+#test-table tbody>tr>td>div:nth-child(2){
+  background-color: #4E5860;  
 }
-#test-table tbody>tr>td>div:nth-child(n+2){
-  background-color: white !important;
+#test-table td{
+  padding: 0;
+}
+ 
+
+#test-table .hide-column{
+  display: none;
+}
+#test-table{
+  width: auto;
+  border:none;
+  border-collapse: collapse ;
+}
+#test-table tr {
+  border: none;
+}
+#test-table td {
+  border: none !important;
+}
+#test-table .col-sm-3, .col-sm-6{
+  padding:0;
+}
+#test-table td>div{
+  min-height: 50px;
+  line-height: 50px;
+}
+#test-table tbody td:first-child{
+  min-width: 18em;
+}
+#test-table tbody td:first-child>div:nth-child(3)>div:first-child{
+  border: 1px solid black;
+  padding:0;
+}
+#test-table tbody td:first-child>div:nth-child(3)>div:first-child>div:first-child{
+  border-right: 1px solid black;
+  padding: 0;
+}
+#test-table tbody td:first-child>div:nth-child(3)>div:first-child>div:nth-child(2){
+  padding: 0;
+}
+#test-table tbody td:first-child>div:nth-child(3)>div:first-child .pretty{
+  margin-right: 0 !important;
+}
+#test-table tbody td:nth-child(n+2){
+  min-width: 15em;
+}
+#test-table tbody td:nth-child(n+2)>div:first-child { 
+  border-left: 0.5px solid black;
+  border-top: 0.5px solid black;
+}
+#test-table td:first-child .btn{
+  border: 1px solid black;
+  width: 12em;
+  height: 2.5em;
+}
+
+#test-table td:nth-child(n+2) .btn{
+  border: 1px solid black; 
 }

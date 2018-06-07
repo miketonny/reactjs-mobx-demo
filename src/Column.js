@@ -11,7 +11,8 @@ class Column extends Component{
             status: this.props.colStatus,
             type: this.props.colType,
             title: this.props.title,
-            data: this.props.data
+            data: this.props.data,
+            show: this.props.show
         };
     }
 
@@ -19,26 +20,27 @@ class Column extends Component{
         this.setState({status: ColumnStatus.Processing});
         this.props.toggle(toggle, this.state.title); // call parent handler
     }
+    cellClicked(indx){
+        this.props.handleCellClick(indx);
+    }
 
     nextTrim(){
-
-    }
-    checkChanged(){
-
-    }
+        this.props.nextTrim(this.state.title);
+    } 
     hideSplit(){
-
+       this.props.hideSplit(this.state.title);
     }     
     componentWillReceiveProps(nextProps){
-        this.setState({status: nextProps.status});
+        this.setState({status: nextProps.status, data: nextProps.data, show: nextProps.show});
     }
  
     render(){ 
         const type = this.state.type;
         const data = this.state.data;
         const title = this.state.title;
+        const hide = this.state.show ? '' : 'hide-column';
         let header = null;
-        const toggles = <div><ToggleButton text='start' status = {this.state.status}  toggle={this.startStop.bind(this)}>start</ToggleButton>
+        const toggles = <div className='col-sm-12'><ToggleButton text='start' status = {this.state.status}  toggle={this.startStop.bind(this)}>start</ToggleButton>
         <ToggleButton  text='stop' status = {this.state.status} toggle={this.startStop.bind(this)}/></div>;
         if(type === ColumnType.Trim){
             header = <div><span className="col-sm-3" onClick={this.nextTrim.bind(this)}>
@@ -48,14 +50,14 @@ class Column extends Component{
         }else{
             header = <div></div>; // first two columns empty header
         }
-        return  <td>
+        return  <td className={hide}> 
                 <div>{header}</div>
                 <div>{toggles}</div>
                 <div>{
                     data.map((d,i) => {
                         let className = d.status === 'Running'? 'running' : d.status === 'Stopped'? 'stopped': d.status === 'Not Started' ? 'italic' : '';
-                        let checkClass = true; // === true ? 'row-checked' : '';
-                        return <DataCell key={i} rowIndex={i} click={this.checkChanged.bind(this)} class={className + ' ' + checkClass} text={d.status}/>;
+                        let checkClass = d.select === true ? 'row-checked' : '';
+                        return <DataCell key={i} rowIndex={i} click={this.cellClicked.bind(this)} class={`${className} ${checkClass}`} text={d.status}/>;
                     })}
                 </div>
                 </td>;
