@@ -42,6 +42,7 @@
   border:1px solid black;
   height: 50px;
   width:100%;
+  margin-bottom: 5px;
 }
 
 .modal {
@@ -299,6 +300,13 @@
   border: 1px solid black;
   width: 12em;
   height: 2.5em;
+}
+
+#test-table td:first-child>div:nth-child(3)>div>div:nth-child(2){
+  cursor: pointer;
+}
+#test-table td:nth-child(n+2)>div:nth-child(3)>div{
+  cursor: pointer;
 }
 
 #test-table td:nth-child(n+2) .btn{

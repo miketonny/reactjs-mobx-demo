@@ -45,11 +45,10 @@ class GroupBox extends Component{
                 <option value={3}>Status Group</option>
             </select>
             </div>
-            <div className="panel-body">
-               <button className="btn">Tight forwards</button>
-            {/* {items.map((item, i)=>{
+            <div className="panel-body"> 
+            {items.map((item, i)=>{
                 return <button key={i} className="btn" onClick={this.handleClick.bind(this)}>{item}</button>
-            })} */}
+            })}
             </div>
         </div>
     }
