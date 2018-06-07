@@ -1,6 +1,6 @@
 import React, { Component } from 'react'; 
 import './App.css';
-import TagTable from './TagTable';
+// import TagTable from './TagTable';
 import Form from './Form';
 import GroupBox from './GroupBox';
 import Modal from './Modal';
@@ -245,8 +245,7 @@ class App extends Component {
             //disable the toggle buttons
             col.is_processing = true; 
             this.setState({dataColumns: this.state.columns}); //disable buttons first
-            DataModel.updatePeriods(updatedAths, 'PUT').
-            then(() => { 
+            DataModel.updatePeriods(updatedAths, 'PUT').then(() => { 
                 col.is_processing = false;
                 this.forceUpdate(); //enable buttons afterwards
                 this.changeTrimSplitStatus(selectedRows, colHead, toggle, col, rows); //update UI
@@ -256,8 +255,7 @@ class App extends Component {
             //disable the toggle buttons
             col.is_processing = true; 
             this.setState({dataColumns: this.state.columns}); //disable buttons first
-            DataModel.updatePeriods(newPeriodsAths, 'POST').
-            then(()=> { 
+            DataModel.updatePeriods(newPeriodsAths, 'POST').then(()=> { 
                 col.is_processing = false;
                 this.forceUpdate(); //enable buttons afterwards
                 this.changeTrimSplitStatus(selectedRows, colHead, toggle, col, rows); //update UI
@@ -289,8 +287,7 @@ class App extends Component {
       else return false;
   }
 
-  toggleClick(toggle, title){
-      console.log(title);
+  toggleClick(toggle, title){ 
       //1 find all selected rows 
       let selectedRowIndxes = [];
       this.state.data[0].data.forEach((d, i) => {
@@ -325,6 +322,8 @@ class App extends Component {
         } else if (toggle === 'stop' && lastPeriod.startTime !== null && lastPeriod.endTime === null) {
             lastPeriod.endTime = this.getCurrentDateTime(); //apply end time 
             return [lastPeriod, 'PUT'];
+        } else {
+            return [null, null];
         }
       }
   }
@@ -343,8 +342,7 @@ class App extends Component {
         // run API ===============================================================
         if (updatedAths && updatedAths.length > 0) { 
             //api call ======================================================
-            DataModel.updatePeriods(updatedAths, 'PUT').then((res) => {
-            console.log(res);
+            DataModel.updatePeriods(updatedAths, 'PUT').then(() => { 
             let updatedIndxes = [];
             this.state.athletes.forEach((a, i) => {
                 if (updatedAths.find(ath => ath.id === a.id)) updatedIndxes.push(i);
@@ -355,8 +353,7 @@ class App extends Component {
             }); 
         }else if(newAths && newAths.length > 0){
             //api call ======================================================
-            DataModel.updatePeriods(newAths, 'POST').then((res) => {
-                console.log(res);
+            DataModel.updatePeriods(newAths, 'POST').then(() => { 
                 let updatedIndxes = [];
                 this.state.athletes.forEach((a, i) => {
                 if (newAths.find(ath => ath.id === a.id)) updatedIndxes.push(i);
@@ -372,7 +369,7 @@ class App extends Component {
     let colIndx = data.findIndex(d => d.title === title);
     data[colIndx].status = ColumnStatus.Idle; //process finishes 
     data[colIndx].data.forEach((d, i) => {
-        if(indxes.includes(i)) d.status = toggle === 'start' ? 'Started' : 'Stopped';
+        if(indxes.includes(i)) d.status = toggle === 'start' ? 'Running' : 'Stopped';
     })
     this.setState({data: data}); //update UI
   }
@@ -429,13 +426,33 @@ selectAllRows(){
       let selectAths = []; 
       if(group === 'All') selectAths = data[0].data;
       else selectAths = data[0].data.filter(d => d.group === group || d.statGroup === group);
-      if(selectAths) return;
-
+      if(!selectAths) return;
+      //add column, add for all athletes....
+      let rows = data[0].data.map(() => {return {status: 'Not Started', select: true}});
+      data.push({title: name, type: ColumnType.Split, show:true,
+         status: ColumnStatus.Idle, data: rows});
+      //select athletes
       let newPeriods = [];
-      selectAths.forEach(ath => {
+      selectAths.forEach(ath => { 
         newPeriods.push({id: ath.id, period: {type: ColumnType.Split, name: name}}); //new period
       });
-      
+      let selectedIndexes = []; 
+      let athIDs = selectAths.map(a => a.id);
+      this.state.athletes.forEach((ath, i) => {
+         if(athIDs.includes(ath.id)) selectedIndexes.push(i);
+      });
+      if(selectedIndexes && selectedIndexes.length > 0){
+          //set all selected athletes selection to true..
+          data.forEach(d => {
+              d.data.forEach((dt, i) => {
+                  if(selectedIndexes.includes(i)) dt.select = true;
+              })
+          })
+      }
+      DataModel.updatePeriods(newPeriods, 'POST').then((res) => {
+          console.log(res);
+        this.setState({data: data});
+      }).catch((err) => console.log(err)); 
 
     //   let cols = this.state.dataColumns.slice();
     //   let existingCol = cols.find((c) => c.title === name);

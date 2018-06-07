@@ -113,7 +113,10 @@ class DataModel {
             if(type === ColumnType.Trim && colIndx !== 0) return false;
             return true; 
         } 
-        return this.data[colIndx+1].show; 
+        
+        if(this.data[colIndx+1]) return this.data[colIndx+1].show; 
+        else return true; //new column added on another pc..
+        
     }
     getData(){
         //get 2-dimentional array of athletes cols => data in each column
@@ -121,7 +124,7 @@ class DataModel {
         let columns = [], rows = [];
         this.athletes.forEach((ath, i) => { 
             rows.push({select: this.getSelectStat(0, i), name: ath.name, group: ath.group, position: ath.position, 
-                statGroup: ath.statGroup});
+                statGroup: ath.statGroup, id:ath.id});
         }); 
         columns.push({title: 'header', type: ColumnType.Other, show: true, data: rows});
         this.athletes.forEach(ath => { 
@@ -148,8 +151,7 @@ class DataModel {
         columns.filter((c, i) => i>0).forEach((c, i)=>{
             c.data = this.getColumnData(c.title, i);
         });
-        this.data = columns;
-        console.log(this.data);
+        this.data = columns; 
     }
 
     getColumnData(title, indx){

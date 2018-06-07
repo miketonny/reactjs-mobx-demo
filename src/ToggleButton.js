@@ -11,15 +11,19 @@ class ToggleButton extends Component{
         let startDisabled = false, endDisabled = false;
         switch(status){
             case ColumnStatus.Processing:
-                startDisabled = true, endDisabled = true;
+                startDisabled = true;
+                endDisabled = true;
                 break;
             case ColumnStatus.Started:
                 startDisabled = true; //user cannot toggle start when split/trim is started
                 break;
             case ColumnStatus.Stopped:
                 endDisabled = true;
+                break;
             case ColumnStatus.Idle:
                 break; //do nothing 
+            default: 
+                break;
         }
         if(this.props.text==='start'){
             return <button className="btn toggle-button" onClick={this.handleClick.bind(this)} disabled={startDisabled}><i className="fas fa-play"></i></button>

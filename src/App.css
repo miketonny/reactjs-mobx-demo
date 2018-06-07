@@ -83,9 +83,7 @@
   border: 0.5px solid black;
 } */
  
-.col-md-10{
-  overflow-x:scroll;
-} 
+
 
   .table thead .col-sm-3, .table thead .col-sm-6 {
     padding: 0; }
@@ -225,14 +223,15 @@
   padding: 0;
 }
  
-
+.App>.col-md-10{
+  overflow-x:auto;
+} 
 #test-table .hide-column{
   display: none;
 }
 #test-table{
   width: auto;
-  border:none;
-  border-collapse: collapse ;
+  border:none; 
 }
 #test-table tr {
   border: none;
@@ -245,31 +244,56 @@
 }
 #test-table td>div{
   min-height: 50px;
-  line-height: 50px;
+  line-height: 50px; 
 }
+#test-table td:nth-child(n+2)>div:nth-child(3) div{
+  height: 51px;
+} 
 #test-table tbody td:first-child{
   min-width: 18em;
+  width: 18em;
 }
-#test-table tbody td:first-child>div:nth-child(3)>div:first-child{
-  border: 1px solid black;
+#test-table tbody td:first-child>div:nth-child(3)>div{
+  border-right: 1px solid black;
+  border-left: 1px solid black;
   padding:0;
 }
-#test-table tbody td:first-child>div:nth-child(3)>div:first-child>div:first-child{
+
+#test-table tbody td:first-child>div:nth-child(3)>div:last-child>div:first-child{
+  border-bottom: 1px solid black;   
+}
+#test-table tbody td:first-child>div:nth-child(3)>div>div:first-child{
   border-right: 1px solid black;
+  border-collapse: collapse;
   padding: 0;
 }
-#test-table tbody td:first-child>div:nth-child(3)>div:first-child>div:nth-child(2){
+#test-table tbody td:first-child>div:nth-child(3)>div>div:nth-child(2){
   padding: 0;
 }
-#test-table tbody td:first-child>div:nth-child(3)>div:first-child .pretty{
+#test-table tbody td:first-child>div:nth-child(3)>div>div:nth-child(n+2){
+  border-bottom: 1px solid black;
+}
+#test-table tbody td:first-child>div:nth-child(3)>div .pretty{
   margin-right: 0 !important;
 }
 #test-table tbody td:nth-child(n+2){
   min-width: 15em;
 }
-#test-table tbody td:nth-child(n+2)>div:first-child { 
+#test-table tbody td div{
+  background-clip: content-box;
+}
+#test-table tbody td:nth-child(n+2)>div:nth-child(3)>div{
+  border-right: 0.5px solid black;
+  border-bottom: 1px solid black;
+}
+#test-table tbody td:nth-child(2)>div:first-child { 
   border-left: 0.5px solid black;
   border-top: 0.5px solid black;
+  border-right: 0.5px solid;
+}
+#test-table tbody td:nth-child(n+3)>div:first-child {  
+  border-top: 0.5px solid black;
+  border-right: 0.5px solid;
 }
 #test-table td:first-child .btn{
   border: 1px solid black;
