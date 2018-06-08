@@ -85,8 +85,7 @@ class DataModel {
         columns.filter((c, i) => i>0).forEach((c, i)=>{
             c.data = this.getColumnData(c.title, i);
         });
-        this.data = columns; 
-        console.log(this.data);
+        this.data = columns;  
     }
 
     getColumnData(title, indx){

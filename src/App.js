@@ -58,6 +58,11 @@ class App extends Component {
         clearInterval(this.intervalId);
     }
 
+    componentWillReceiveProps(nextProps){
+        console.log(nextProps.sessionStatus);
+        this.setState({sessionStatus:nextProps.sessionStatus});
+    }
+
     //API looping call =============
     componentDidMount() {
         //api call to fetch athlete data from server DB every 5 sec............  

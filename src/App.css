@@ -242,6 +242,7 @@
 }
 #test-table .col-sm-3, .col-sm-6{
   padding:0;
+  white-space: nowrap;
 }
 #test-table td>div{
   min-height: 50px;

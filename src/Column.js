@@ -37,7 +37,7 @@ class Column extends Component{
     render(){ 
         const type = this.state.type;
         const data = this.state.data;
-        const title = this.state.title;
+        const title = this.state.title.length > 16 ? `${this.state.title.slice(0, 15)}...` : this.state.title;
         const hide = this.state.show ? '' : 'hide-column';
         let header = null;
         const toggles = <div className='col-sm-12'><ToggleButton text='start' status = {this.state.status}  toggle={this.startStop.bind(this)}>start</ToggleButton>
