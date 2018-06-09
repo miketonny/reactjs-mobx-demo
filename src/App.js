@@ -94,7 +94,7 @@ class App extends Component {
     //group box selection chagned, select the rows for matching groups, client side only =========================
     selectedGroupChanged(grpName, option) {
         //selected group name defined...select the rows that matching grps
-        let rows = this.state.data[0].data;
+        let rows = [...this.state.data[0]];
         let grpRows = [];
         if (option === "1") {
             grpRows = rows.filter((r) => r.group === grpName);
