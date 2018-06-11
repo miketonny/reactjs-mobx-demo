@@ -1,9 +1,22 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { Provider } from 'mobx-react';
 import './index.css';
 import App from './App';
+
+import dataStore from './models/DataStore';
+import uiStore from './models/UIStore';
+import rootStore from './models/RootStore';
+
 //import registerServiceWorker from './registerServiceWorker';
 
+// const stores = {
+//     rootStore
+// };
 
-ReactDOM.render(<App />, document.getElementById('root')); 
+ReactDOM.render((
+    <Provider rootStore={new rootStore()}>
+    <App />
+    </Provider>), 
+document.getElementById('root')); 
 //registerServiceWorker();

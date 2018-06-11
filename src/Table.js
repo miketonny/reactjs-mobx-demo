@@ -1,16 +1,11 @@
 import React, { Component } from 'react'; 
 import Column from './Column';
 import HeaderColumn from './HeaderColumn';
+import { inject, observer } from 'mobx-react';
 
-
+@inject('rootStore')
+@observer
 class Table extends Component{
-    constructor(props){
-        super(props);
-        this.state = { 
-            columns: this.props.columns
-        };
-    }
-
     componentWillReceiveProps(nextProps){
         this.setState({columns: nextProps.columns});
     }
@@ -25,7 +20,7 @@ class Table extends Component{
     }
  
     render(){
-        const columns = this.state.columns; 
+        const columns = this.props.rootStore.data.data;  
         return  <div className = 'col-md-10' ><table id='test-table' className='table'>
             <tbody>
                 <tr>
