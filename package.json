@@ -23,6 +23,7 @@
     "babel-eslint": "^8.2.3",
     "babel-preset-mobx": "^1.0.2",
     "eslint-config-google": "^0.9.1",
-    "gh-pages": "^1.2.0"
+    "gh-pages": "^1.2.0",
+    "mobx-react-devtools": "^5.0.1"
   }
 }

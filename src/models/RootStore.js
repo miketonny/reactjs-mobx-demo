@@ -11,4 +11,5 @@ export default class RootStore {
     @computed get isLoading(){
         return this.ui.loading;
     }
+ 
 }

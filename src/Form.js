@@ -1,39 +1,33 @@
 import React, { Component } from 'react'; 
 import Select, {Creatable} from 'react-select';
 import 'react-select/dist/react-select.css';
+import { inject, observer } from 'mobx-react';
 
+
+@inject('rootStore')
+@observer
 class Form extends Component{
-    constructor(props){
-        super(props);
-        this.state={
-            splitNames: this.props.splitNames,
-            groups:this.props.groups,
-            selected: '',
-            selectedGrp: '',
-            hideAlert: true
-        }
-    }
-    haneldSplitNameChange(e){  
+    handleSplitNameChange(e){  
         if(e===null){     
             return;
         }
-        this.setState({selected: e.value});
+        this.props.rootStore.ui.setNewSplitName(e.value);
     }
     handleGroupChange(e){
-        this.setState({selectedGrp: e.value});
+        this.props.rootStore.ui.preSelectGroup(e.value); 
     }
     handleSubmit(e){
         e.preventDefault(); 
-        if (this.state.selected === null || this.state.selected === ''){
-            this.setState({hideAlert:false});
+      
+        if (this.props.rootStore.ui.newSplitName === null || this.props.rootStore.ui.newSplitName === ''){
+            this.props.rootStore.ui.showAlert(); 
             return; //split name must be entered before proceed.. 
         }
-        let name = this.state.selected;
-        let grp = this.state.selectedGrp===''? "All": this.state.selectedGrp;
-        this.props.submit(name, grp);
+        this.props.rootStore.ui.addNewSplit();  
+        this.props.rootStore.ui.addNewSplitColumn(this.props.rootStore.ui.newSplitName, this.props.rootStore.ui.preSelectGrp);
     }
     render(){ 
-        let alertClass = 'alert alert-warning ' + (this.state.hideAlert ? 'hide' : ''); 
+        const alertClass = 'alert alert-warning ' + (this.props.rootStore.ui.hideAlertMsg ? 'hide' : ''); 
         return <div className="panel col-sm-offset-2 col-sm-8 ">
         <div className="panel-heading"><h2><strong>AddSplit</strong></h2></div>
         <hr/>
@@ -44,9 +38,9 @@ class Form extends Component{
                 <Select.Creatable 
                     name="form-field-name"
                     inputProps={{autoComplete:'off'}}
-                    value={this.state.selected}
-                    onChange={this.haneldSplitNameChange.bind(this)}
-                    options={this.state.splitNames}
+                    value={this.props.rootStore.ui.newSplitName}
+                    onChange={this.handleSplitNameChange.bind(this)}
+                    options={this.props.rootStore.data.splitNames}
                     clearable={false}
                     placeholder="Select or type in your split name..." 
                 /> 
@@ -57,17 +51,12 @@ class Form extends Component{
            <div className="col-sm-10">
                 <Select 
                     name="form-field-name" 
-                    value={this.state.selectedGrp !== ''? this.state.selectedGrp: 'All'}
+                    value={this.props.rootStore.ui.preSelectGrp !== ''? this.props.rootStore.ui.preSelectGrp: 'All'}
                     onChange={this.handleGroupChange.bind(this)}
-                    options={this.state.groups}
+                    options={this.props.rootStore.data.modalGrps}
                     searchable={false}
                     clearable={false} 
                 /> 
-                {/* <select className="form-control" onChange={this.handleGroupChange.bind(this)}>
-                        {this.state.groups.map((g,i)=>{
-                                return <option key={i} value={g}>{g}</option>
-                            })}
-                </select> */}
            </div>
         </div> 
         <div className="form-group">

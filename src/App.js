@@ -26,15 +26,7 @@ class App extends Component {
         //     localStorage.setItem('sessionID', JSON.stringify(this.state.sessionID)); //store sessionID in localstorage..
         // }  
         //2) setup default rows/columns.. fetch from localstorage ======
-        const splits = [];
-        splits.push({ 'value': 'Running Drill', 'label': 'Running Drill' });
-        splits.push({ 'value': 'Split 1', 'label': 'Split 1' });
-        splits.push({ 'value': 'Split 2', 'label': 'Split 2' });
-        splits.push({ 'value': 'Split 3', 'label': 'Split 3' });
-        splits.push({ 'value': 'Drill', 'label': 'Drill' });
-        this.setState({
-            splitNames: splits
-        });
+
     }
     //remove interval upon destroy component..
     componentWillUnmount() {
@@ -52,6 +44,10 @@ class App extends Component {
         this.intervalId = setInterval(() => this.props.rootStore.data.getData(), 5000);
     }
 
+    handleAddSplit(){
+        this.props.rootStore.ui.addSplit();
+    }
+
     render() {
         const loading = this.props.rootStore.isLoading;
         if (loading) { // if your component doesn't have to wait for an async action, remove this block 
@@ -64,8 +60,8 @@ class App extends Component {
             <div className="App row" >
                 <div className="col-md-12">
                     <div className="control-buttons pull-right">
-                        <button className="btn" onClick={this.props.rootStore.showAll}>Show All</button>
-                        <button className="btn" onClick={this.props.rootStore.addSplit}>Add Split</button>
+                        <button className="btn" onClick={this.props.rootStore.ui.showAll}>Show All</button>
+                        <button className="btn" onClick={this.handleAddSplit.bind(this)}>Add Split</button>
                     </div>
                 </div>
                 <div className="col-md-2"><GroupBox groups={this.props.rootStore.positionalGroups} 
