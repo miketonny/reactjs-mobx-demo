@@ -6,12 +6,6 @@ import { inject, observer } from 'mobx-react';
 @inject('rootStore')
 @observer
 class Table extends Component{
-    componentWillReceiveProps(nextProps){
-        this.setState({columns: nextProps.columns});
-    }
-    handleCellClick(indx){
-        this.props.cellChecked(indx);
-    }
     handleHideSplit(title){
         this.props.handleHideSplit(title);
     }
@@ -25,10 +19,10 @@ class Table extends Component{
             <tbody>
                 <tr>
                     {columns.map((col, i) => {
-                        if(i === 0) return <HeaderColumn key={i} data={col.data} handleCheck = {this.props.checkChanged} checkAll={this.props.checkAll} />;
+                        if(i === 0) return <HeaderColumn key={i} data={col.data}/>;
                         else return <Column key={i} colStatus = {col.status} show = {col.show} nextTrim = {this.handleNextTrim.bind(this)}
                         colType = {col.type} title = {col.title} data = {col.data} toggle={this.props.handleToggle} 
-                        handleCellClick={this.handleCellClick.bind(this)} hideSplit={this.handleHideSplit.bind(this)}/>;
+                        hideSplit={this.handleHideSplit.bind(this)}/>;
                     })}
                 </tr>
             </tbody>

@@ -41,11 +41,14 @@ class App extends Component {
     //API looping call =============
     componentDidMount() {
         //api call to fetch athlete data from server DB every 5 sec............  
-        this.intervalId = setInterval(() => this.props.rootStore.data.getData(), 5000);
+        setInterval(() => this.props.rootStore.data.getData(), 5000);
     }
 
     handleAddSplit(){
         this.props.rootStore.ui.addSplit();
+    }
+    showAllSplits(){
+        this.props.rootStore.ui.showAllSplits();
     }
 
     render() {
@@ -60,7 +63,7 @@ class App extends Component {
             <div className="App row" >
                 <div className="col-md-12">
                     <div className="control-buttons pull-right">
-                        <button className="btn" onClick={this.props.rootStore.ui.showAll}>Show All</button>
+                        <button className="btn" onClick={this.showAllSplits.bind(this)}>Show All</button>
                         <button className="btn" onClick={this.handleAddSplit.bind(this)}>Add Split</button>
                     </div>
                 </div>

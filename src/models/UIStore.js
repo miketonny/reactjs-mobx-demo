@@ -44,16 +44,30 @@ export default class UIStore {
     @action
     grpSelected(grpName){
         //select the groups 
-        this.root.data.data[0].data.forEach(d => {
-            if(d.group === grpName || d.position === grpName || d.statGroup === grpName) d.select = true;
+        let rowIndex = [];
+        let newData = this.root.data.data.slice();
+        newData[0].data.forEach((d,i) => {
+            if(d.group === grpName || d.position === grpName || d.statGroup === grpName) rowIndex.push(i);
         });
+        newData.forEach(d => {
+            d.data.forEach((dt, i) => {
+                if(rowIndex.includes(i)) dt.select = !dt.select;
+            })
+        });
+        this.root.data.data.replace(newData);
     }
 
     @action
-    showAll(){
-
+    showAllSplits(){
+        let newData = this.root.data.data.slice();
+        newData.filter(d => d.type === 'split').forEach(d => d.show = true);
+        this.root.data.data.replace(newData);
     }
 
+
+    /**
+     * Split modal toggle section =======================================
+     */
     @action
     addSplit(){
         this.showAddSplit = !this.showAddSplit;
@@ -77,6 +91,37 @@ export default class UIStore {
     addNewSplitColumn(name, preSelectedGrp){
         let grp = this.preSelectGrp===''? "All": this.preSelectGrp;
         //data processing...
+    }
+
+
+    /**
+     * table clicks etc
+     */
+    @action
+    checkAllRows() {
+        //check all rows on screen...
+        let newData = this.root.data.data.slice();
+        this.allChecked = !this.allChecked;
+        newData.forEach(d => d.data.forEach(dt => dt.select = this.allChecked));
+        this.root.data.data.replace(newData);
+    }
+    @action
+    checkOneRow(rowIndx){
+        let newData = this.root.data.data.slice();
+        newData.forEach(d => d.data[rowIndx].select = !d.data[rowIndx].select);
+        this.root.data.data.replace(newData);
+    }
+
+    @action
+    showNextTrim(title){
+        //show modal
+
+    }
+    @action
+    hideColumn(title){
+        let newData = this.root.data.data.slice();
+        newData.find(d => d.title === title).show = false;
+        this.root.data.data.replace(newData);
     }
 
 }

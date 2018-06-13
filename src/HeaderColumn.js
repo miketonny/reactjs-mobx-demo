@@ -1,32 +1,29 @@
 import React, { Component } from 'react'; 
 import Checkbox from './Checkbox';
 import DataCell from './DataCell';
+import { inject, observer } from 'mobx-react';
 
+@inject('rootStore')
+@observer
 class HeaderColumn extends Component{
-    constructor(props){
-        super(props);
-        this.state = {
-            data: this.props.data
-
-        };
-    }
- 
- 
-    componentWillReceiveProps(nextProps){
-        this.setState({data: nextProps.data});
+    checkAll(){
+        this.props.rootStore.ui.checkAllRows();
     }
 
+    handleCheck(rowIndx){
+        this.props.rootStore.ui.checkOneRow(rowIndx);
+    }
     render(){
-        const data = this.state.data;
+        const data = this.props.data;
         return   <td>
         <div></div>
-        <div><button className="btn" onClick={this.props.checkAll}>Select All</button></div>
+        <div><button className="btn" onClick={this.checkAll.bind(this)}>Select All</button></div>
         <div>{
             data.map((d,i) => { 
                 let checkClass = d.select === true ? 'row-checked' : '';
                 return <div key={i} className='col-sm-12'>
-                    <div className='col-sm-3'><Checkbox rowIndex={i} onChange={this.props.handleCheck} status={d.select}/></div>
-                    <div className='col-sm-9'><DataCell rowIndex={i}  click={this.props.handleCheck} class={checkClass} text={d.name}/></div>
+                    <div className='col-sm-3'><Checkbox rowIndex={i} onChange={this.handleCheck.bind(this)} status={d.select}/></div>
+                    <div className='col-sm-9'><DataCell rowIndex={i}  click={this.handleCheck.bind(this)} class={checkClass} text={d.name}/></div>
                     </div>;
             })}</div>
         </td>;

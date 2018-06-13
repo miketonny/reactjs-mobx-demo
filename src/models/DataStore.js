@@ -1,4 +1,4 @@
-import { observable, computed, action } from "mobx";
+import { observable, computed, action, autorun } from "mobx";
 import {ColumnType, ColumnStatus } from '../Enum';
 import {fetchAthletes} from './Transport';
 
@@ -20,7 +20,7 @@ export default class DataStore {
     }
 
    //digest the api returned data ========================================================================
-   getData(){
+     getData(){
         //get 2-dimentional array of athletes cols => data in each column
         //first column in array has 'checkboxes/athlete name'         
         let columns = [], rows = []; 
@@ -30,10 +30,30 @@ export default class DataStore {
             rows = this.processHeaderColumn(aths);
             columns = this.processDataColumn(aths);
             columns.unshift({title: 'header', type: ColumnType.Other, show: true, data: rows}); 
-            this.data = columns; 
+            //compare and update data
+            this.updateDataStatus(columns);
+            //this.data = columns; 
             this.getAllGroups();
         });
     }
+    
+    @action
+    updateDataStatus(newData){
+        if(this.data.length === 0) return this.data = newData ; //initial load...
+        this.data.replace(newData);
+        // if(this.data[0].data.length < newData[0].data.length){
+        //     //new athlete found
+        //     this.data = newData;
+        // }
+        // //now only update what's needed to update
+        // this.data.forEach((d, i) => {
+        //     if(d.show !== newData[i].show) this.data[i].; 
+        //     d.data.forEach((dt, k) => {
+        //         if(dt.status !== newData[i].data[k].status) dt.status = newData[i].data[k].status; //update status..
+        //     });
+        // });
+    }
+
 
     processHeaderColumn(aths){ 
         let rows = [];
