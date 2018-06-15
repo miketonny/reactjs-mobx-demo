@@ -10,7 +10,8 @@ import { inject, observer } from 'mobx-react';
 class Column extends Component{
     startStop(toggle){  
         this.setState({status: ColumnStatus.Processing});
-        this.props.toggle(toggle, this.state.title); // call parent handler
+        this.props.toggle(toggle, this.state.title); // call parent handler , if not
+
     }
     cellClicked(indx){
         this.props.rootStore.ui.checkOneRow(indx);
