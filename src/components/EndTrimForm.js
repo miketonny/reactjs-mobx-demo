@@ -1,9 +1,12 @@
 import React, { Component } from 'react'; 
+import { inject, observer } from 'mobx-react';
 
+@inject('rootStore')
+@observer
 class EndTrimForm extends Component{
     handleConfirm(e){
         e.preventDefault(); 
-        this.props.confirm();
+        this.props.rootStore.ui.endCurrentTrim();
     }
     render(){
         return  <div className="col-sm-offset-2 col-sm-8 ">

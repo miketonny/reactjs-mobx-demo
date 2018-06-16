@@ -1,6 +1,6 @@
 import React, { Component } from 'react'; 
 
-import { ColumnStatus} from './Enum';
+import { ColumnStatus} from '../models/Enum';
 
 class ToggleButton extends Component{
     handleClick(){

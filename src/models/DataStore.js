@@ -1,6 +1,6 @@
-import { observable, computed, action, autorun } from "mobx";
-import {ColumnType, ColumnStatus } from '../Enum';
-import {fetchAthletes} from './Transport';
+import { observable, action } from "mobx";
+import {ColumnType, ColumnStatus } from '../models/Enum';
+import {fetchAthletes, updatePeriods} from './Transport';
 
 export default class DataStore { 
     @observable data = []; 
@@ -8,6 +8,7 @@ export default class DataStore {
     @observable statusGroups = [];
     @observable positions = [];
     @observable modalGrps = [];
+    athletes = [];
     splitNames = [];
 
     constructor(rootStore){
@@ -34,6 +35,8 @@ export default class DataStore {
             this.updateDataStatus(columns);
             //this.data = columns; 
             this.getAllGroups();
+            this.athletes = aths;
+            this.root.ui.loading = false;
         });
     }
     
@@ -41,17 +44,6 @@ export default class DataStore {
     updateDataStatus(newData){
         if(this.data.length === 0) return this.data = newData ; //initial load...
         this.data.replace(newData);
-        // if(this.data[0].data.length < newData[0].data.length){
-        //     //new athlete found
-        //     this.data = newData;
-        // }
-        // //now only update what's needed to update
-        // this.data.forEach((d, i) => {
-        //     if(d.show !== newData[i].show) this.data[i].; 
-        //     d.data.forEach((dt, k) => {
-        //         if(dt.status !== newData[i].data[k].status) dt.status = newData[i].data[k].status; //update status..
-        //     });
-        // });
     }
 
 
@@ -159,7 +151,129 @@ export default class DataStore {
         this.modalGrps = modalgrps;
     }
 
+    //does the actual processing of toggling, including UI render/API calls/callbacks
+    toggleTrimSplit(rowIndxes, title, toggle){
+        let updatedAths = [];
+        let newAths = [];
+        //1) fetching the new or updated records from selected rows on screen, along with their HTTP method needed
+        this.athletes.forEach((ath, i) => {
+            if (rowIndxes.includes(i)){
+                let [period, method] = this.getUpdatedNewPeriod(ath.periods.filter(a => a.name === title), toggle);
+                if(period) {
+                    if(method === 'PUT') updatedAths.push({id: ath.id, period: period});
+                    else newAths.push({id: ath.id, period: period});
+                } 
+            }
+        }); 
+        //2)call API ===============================================================
+        if (updatedAths && updatedAths.length > 0) { 
+            this.processToggle(updatedAths, title, toggle, 'PUT');
+        }else if(newAths && newAths.length > 0){
+            this.processToggle(newAths, title, toggle, 'POST');
+        } 
+    } 
 
+    processToggle(athletes, colTitle, toggle, method){
+        //1. api call ======================================================
+        updatePeriods(athletes, method).then((res) => { 
+            console.log(res);
+            let updatedIndxes = [];
+            this.athletes.forEach((a, i) => {
+                if (athletes.find(ath => ath.id === a.id)) updatedIndxes.push(i);
+            });
+            //2. render UI when successfully updated to db =================
+            this.updateTrimSplitStatus(updatedIndxes, colTitle, toggle); 
+        }).catch(err => {
+            console.log(err); //update failed to API, log to console -debug
+        }); 
+    }
+    
+    updateTrimSplitStatus(indxes, title, toggle){
+        let data = this.data.slice(); 
+        let colIndx = data.findIndex(d => d.title === title);
+        data[colIndx].status = ColumnStatus.Idle; //process finishes 
+        data[colIndx].data.forEach((d, i) => {
+            if(indxes.includes(i)) d.status = toggle === 'start' ? 'Running' : 'Stopped';
+        })
+        this.data.replace(data);
+    }
+
+    //destructuring and return the period object with the post method ======================================
+    getUpdatedNewPeriod(periods, toggle){
+        //e.g. split 3 for athlete Andrew
+        if (!periods) return [null, null];
+        const type = periods[0].type;
+        let lastPeriod = periods[periods.length - 1];
+        if(type === 'Trim'){
+            //trim
+            if (toggle === 'start' && lastPeriod.startTime === null) {
+                lastPeriod.startTime = this.getCurrentDateTime();
+            } else if (toggle === 'stop' && lastPeriod.endTime === null) {
+                lastPeriod.endTime = this.getCurrentDateTime();
+            } else { return [null, null]; }
+            return [lastPeriod, 'PUT'];
+        }else{
+            //split
+            if (toggle === 'start' && lastPeriod.startTime === null) {
+                lastPeriod.startTime = this.getCurrentDateTime();
+                return [lastPeriod, 'PUT'];
+            } else if (toggle === 'start' && lastPeriod.startTime !== null && lastPeriod.endTime !== null) {
+                //already started and ended on this period,create a new one..
+                let newPeriod = { startTime: this.getCurrentDateTime(), type: 'split', name: lastPeriod.name }
+                return [newPeriod, 'POST'];
+            } else if (toggle === 'stop' && lastPeriod.startTime !== null && lastPeriod.endTime === null) {
+                lastPeriod.endTime = this.getCurrentDateTime(); //apply end time 
+                return [lastPeriod, 'PUT'];
+            } else {
+                return [null, null];
+            }
+        }
+    }
+
+     //get local ISO time string to match database date time format...
+     getCurrentDateTime() {
+        return new Date().getFullYear() + '-' + ('0' + (new Date().getMonth() + 1)).slice(-2) + '-' + ('0' + new Date().getDate()).slice(-2) + 'T' +
+            ('0' + new Date().getHours()).slice(-2) + ':' + ('0' + new Date().getMinutes()).slice(-2) + ':' + ('0' + new Date().getSeconds()).slice(-2) + '.' +
+            new Date().getMilliseconds();
+    }
 
     
+    addSplit(name, grp){
+           //2. check if split name already exist
+           let data = this.data.slice();
+           let existingCol = data.find(d => d.title === name);
+           if(existingCol) return; //split already exists, dont do anything..
+           let selectAths = []; 
+           if(grp === 'All') selectAths = data[0].data;
+           else selectAths = data[0].data.filter(d => d.group === grp || d.statGroup === grp);
+           if(!selectAths || selectAths.length === 0) return;
+           //3. add new split column, add for all athletes ===============================
+           let rows = data[0].data.map(() => {return {status: 'Not Started', select: true}});
+           data.push({title: name, type: ColumnType.Split, show:true,
+               status: ColumnStatus.Idle, data: rows});
+           //select athletes and prepare for API data request models
+           let newPeriods = [];
+           selectAths.forEach(ath => { 
+               newPeriods.push({id: ath.id, period: {type: ColumnType.Split, name: name}}); //new period
+           });
+           let selectedIndexes = []; 
+           let athIDs = selectAths.map(a => a.id);
+           this.athletes.forEach((ath, i) => {
+               if(athIDs.includes(ath.id)) selectedIndexes.push(i);
+           });
+           if(selectedIndexes && selectedIndexes.length > 0){
+               //set all selected athletes selection to true..
+               data.forEach(d => {
+                   d.data.forEach((dt, i) => {
+                       if(selectedIndexes.includes(i)) dt.select = true;
+                   })
+               })
+           } 
+           //4. api call ==========================================
+           if(newPeriods.length > 0){
+            updatePeriods(newPeriods, 'POST').then(() => { 
+                this.data.replace(data);
+            }).catch((err) => console.log(err)); 
+           }
+    }
 }

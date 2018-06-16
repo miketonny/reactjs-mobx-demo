@@ -1,7 +1,7 @@
 import React, { Component } from 'react'; 
 
 //customized checkboxes, rounded===
-class Checkbox extends React.Component{
+class Checkbox extends Component{
     handleCheck(){
         this.props.onChange(this.props.rowIndex);    
     } 

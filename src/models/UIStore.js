@@ -1,5 +1,5 @@
-import { observable, computed, action, autorun, reaction } from "mobx";
-import {ColumnType, ColumnStatus } from '../Enum';
+import { observable, computed, action } from "mobx";
+import {ColumnType, ColumnStatus } from '../models/Enum';
 
 
 export default class UIStore {
@@ -8,11 +8,12 @@ export default class UIStore {
     @observable showEndTrim = false;
     @observable sessionID = '';
     @observable sessionStatus = 'Running';
-    @observable loading = false;
+    @observable loading = true;
     @observable groupSelectedOption = 1;
     @observable newSplitName = '';
     @observable preSelectGrp = '';
     @observable hideAlertMsg = true;
+    @observable currentTrimName = '';
 
     constructor(rootStore){
         this.root = rootStore;
@@ -20,9 +21,12 @@ export default class UIStore {
 
 
     @computed get session(){
-        return this.sessionID = '277876';
+        return this.sessionID = '277876'; //demo purpose..
     }
 
+    /*
+    * Group box section on left =================================================================
+    */
     @computed get displayedGroups(){    
         switch (this.groupSelectedOption) {
             case 1:
@@ -57,6 +61,9 @@ export default class UIStore {
         this.root.data.data.replace(newData);
     }
 
+    /**
+     * Button section on top right ============================================
+     */
     @action
     showAllSplits(){
         let newData = this.root.data.data.slice();
@@ -64,6 +71,14 @@ export default class UIStore {
         this.root.data.data.replace(newData);
     }
 
+    @action
+    handleOverlay(e){
+        let modal = document.getElementById('modal');
+        if (modal !== 'undefined' && e.target === modal) {
+                this.showAddSplit = false;
+                this.showEndTrim = false;
+        }
+    }
 
     /**
      * Split modal toggle section =======================================
@@ -87,15 +102,18 @@ export default class UIStore {
     showAlert(){
         this.hideAlertMsg = false;
     }
+
     @action
-    addNewSplitColumn(name, preSelectedGrp){
-        let grp = this.preSelectGrp===''? "All": this.preSelectGrp;
-        //data processing...
+    addNewSplitColumn(){
+        let grp = (!this.preSelectedGrp || this.preSelectGroup ==='') ? "All": this.preSelectedGrp;
+        //1. hide modal
+        this.showAddSplit = false; 
+        this.root.data.addSplit(this.newSplitName, grp);
     }
 
 
     /**
-     * table clicks etc
+     * table clicks etc =============================================================
      */
     @action
     checkAllRows() {
@@ -105,6 +123,7 @@ export default class UIStore {
         newData.forEach(d => d.data.forEach(dt => dt.select = this.allChecked));
         this.root.data.data.replace(newData);
     }
+
     @action
     checkOneRow(rowIndx){
         let newData = this.root.data.data.slice();
@@ -114,14 +133,53 @@ export default class UIStore {
 
     @action
     showNextTrim(title){
-        //show modal
-
+        //show modal 
+        this.showEndTrim = true;
+        this.currentTrimName = title;
     }
+
+    @action
+    endCurrentTrim(){
+        //1) find the current trim and then hide it
+        let data = this.root.data.data.slice();
+        let trims = data.filter(d => d.type === ColumnType.Trim);
+        let currentDisplayedTrimIndx = trims.findIndex(t => t.show);
+        let currentTrim = trims[currentDisplayedTrimIndx];
+        let nextTrimIndx = currentDisplayedTrimIndx + 1;
+        //check whether next trim exists or not then set status
+        if (trims.length > nextTrimIndx){
+            trims.forEach((c, i) => {
+                c.show = false;
+                if (i === nextTrimIndx) c.show = true;
+            })
+        }
+        this.showEndTrim = false; //hide trim modal
+        this.root.data.data.replace(data); //update table data 
+        //2) end current trim by toggle all 'Running' sessions to 'Stop' and send API requests
+        let endingTrims = []; 
+        currentTrim.data.forEach((d,i) => {if(d.status === 'Running') endingTrims.push(i)});
+        if(endingTrims) this.root.data.toggleTrimSplit(endingTrims, currentTrim.title, 'stop'); 
+    }
+    
     @action
     hideColumn(title){
         let newData = this.root.data.data.slice();
         newData.find(d => d.title === title).show = false;
         this.root.data.data.replace(newData);
+    }
+
+    @action
+    toggleStartStop(toggle, title){
+        //1. set status of column to processing//
+        let newData = this.root.data.data.slice();
+        let col = newData.find(d => d.title === title); 
+        col.status = ColumnStatus.Processing;
+        this.root.data.data.replace(newData);
+        //2. get the selected rows and send API request..
+        let selectedRows = [];
+        col.data.forEach((d, i) => d.select ? selectedRows.push(i) : '');
+        if(selectedRows.length > 0) this.root.data.toggleTrimSplit(selectedRows, title, toggle);
+        
     }
 
 }

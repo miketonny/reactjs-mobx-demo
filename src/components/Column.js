@@ -1,7 +1,7 @@
 import React, { Component } from 'react';  
 import DataCell from './DataCell';
 import ToggleButton from './ToggleButton';
-import { ColumnType, ColumnStatus} from './Enum';
+import { ColumnType} from '../models/Enum';
 import { inject, observer } from 'mobx-react';
 
 
@@ -9,8 +9,7 @@ import { inject, observer } from 'mobx-react';
 @observer
 class Column extends Component{
     startStop(toggle){  
-        this.setState({status: ColumnStatus.Processing});
-        this.props.toggle(toggle, this.state.title); // call parent handler
+        this.props.rootStore.ui.toggleStartStop(toggle, this.props.title);
     }
     cellClicked(indx){
         this.props.rootStore.ui.checkOneRow(indx);

@@ -2,13 +2,11 @@ import React, { Component } from 'react';
 import { inject, observer } from 'mobx-react';
 import './App.css';
 // import TagTable from './TagTable';
-import Form from './Form';
-import GroupBox from './GroupBox';
-import Modal from './Modal';
-import EndTrimForm from './EndTrimForm';
-import DataModel from './DataModel';
-import Table from './Table'; 
-import { ColumnType, ColumnStatus} from './Enum';
+import Form from './components/Form';
+import GroupBox from './components/GroupBox';
+import Modal from './components/Modal';
+import EndTrimForm from './components/EndTrimForm'; 
+import Table from './components/Table';  
  
 @inject('rootStore') 
 @observer
@@ -16,27 +14,10 @@ class App extends Component {
     /*
     Component state change events =====================================================================================
     */
-    componentWillMount() {
-        //1) if stored sessionID isnt the same as current state session ID, clear the storage to avoid conflicting...
-        // let storedSession = localStorage.getItem('sessionID'); 
-        // if(storedSession !== null && storedSession !== 'undefined') storedSession = JSON.parse(localStorage.getItem('sessionID'));
-        // if (storedSession !== null && storedSession !== this.state.sessionID && storedSession !== 'undefined') {
-        //     localStorage.clear(); //clear storage when stored session isnt matching current sessionID..
-        // } else if (storedSession === null) {
-        //     localStorage.setItem('sessionID', JSON.stringify(this.state.sessionID)); //store sessionID in localstorage..
-        // }  
-        //2) setup default rows/columns.. fetch from localstorage ======
-
-    }
-    //remove interval upon destroy component..
-    componentWillUnmount() {
-        clearInterval(this.intervalId);
-    }
-
-    componentWillReceiveProps(nextProps){
-        console.log(nextProps.sessionStatus);
-        this.setState({sessionStatus:nextProps.sessionStatus});
-    }
+    // componentWillReceiveProps(nextProps){
+    //     console.log(nextProps.sessionStatus);
+    //     //this.setState({sessionStatus:nextProps.sessionStatus});
+    // }
 
     //API looping call =============
     componentDidMount() {
@@ -51,6 +32,11 @@ class App extends Component {
         this.props.rootStore.ui.showAllSplits();
     }
 
+        //hanle overlay clicks to hide modal when not clicked on modal
+    handleOverlay(e) {
+        this.props.rootStore.ui.handleOverlay(e);
+    }
+
     render() {
         const loading = this.props.rootStore.isLoading;
         if (loading) { // if your component doesn't have to wait for an async action, remove this block 
@@ -60,7 +46,7 @@ class App extends Component {
                 ); 
         } 
         return (
-            <div className="App row" >
+            <div className="App row" onClick={this.handleOverlay.bind(this)}>
                 <div className="col-md-12">
                     <div className="control-buttons pull-right">
                         <button className="btn" onClick={this.showAllSplits.bind(this)}>Show All</button>
@@ -71,14 +57,11 @@ class App extends Component {
                 positions={this.props.rootStore.positions} 
                 statusGrps={this.props.rootStore.statusGroups}
                     /></div>
-                <Table columns={this.props.rootStore.data.data}/>
-                {/* <Table columns={this.state.data} handleToggle={this.toggleClick.bind(this)} handleHideSplit={this.hideSplit.bind(this)}
-                checkChanged={this.handleCheck.bind(this)} cellChecked={this.handleCheck.bind(this)} checkAll={this.selectAllRows.bind(this)}
-                handleNextTrim={this.handleNextTrim.bind(this)}/> */}
+                <Table columns={this.props.rootStore.data.data}/> 
                 <Modal show={this.props.rootStore.ui.showAddSplit} 
                 children={<Form />} />
                 <Modal show={this.props.rootStore.ui.showEndTrim} 
-                children={<EndTrimForm />} />
+                children={<EndTrimForm name={this.props.rootStore.ui.currentTrimName}/>} />
 
             </div>
         );

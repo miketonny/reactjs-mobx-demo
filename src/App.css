@@ -292,10 +292,14 @@
   border-left: 0.5px solid black;
   border-top: 0.5px solid black;
   border-right: 0.5px solid;
+  margin-right: -0.5px;
 }
 #test-table tbody td:nth-child(n+3)>div:first-child {  
   border-top: 0.5px solid black;
   border-right: 0.5px solid;
+  border-left: 0.5px solid;
+  margin-left: -0.5px;
+  margin-right: -0.5px;
 }
 #test-table td:first-child .btn{
   border: 1px solid black;

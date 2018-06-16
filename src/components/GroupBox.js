@@ -1,7 +1,5 @@
 import React, { Component } from 'react';  
-import { inject, observer } from 'mobx-react';
-
-import DevTools from 'mobx-react-devtools';
+import { inject, observer } from 'mobx-react'; 
 
 @inject('rootStore') 
 @observer
@@ -32,8 +30,7 @@ class GroupBox extends Component{
                 return <button key={i} className="btn" onClick={this.handleClick.bind(this)}>{item}</button>
             })}
             </div>
-            
-        <DevTools />
+             
         </div>
     }
 }

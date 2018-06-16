@@ -1,5 +1,5 @@
 import React, { Component } from 'react'; 
-import Select, {Creatable} from 'react-select';
+import Select from 'react-select';
 import 'react-select/dist/react-select.css';
 import { inject, observer } from 'mobx-react';
 
@@ -18,13 +18,11 @@ class Form extends Component{
     }
     handleSubmit(e){
         e.preventDefault(); 
-      
         if (this.props.rootStore.ui.newSplitName === null || this.props.rootStore.ui.newSplitName === ''){
             this.props.rootStore.ui.showAlert(); 
             return; //split name must be entered before proceed.. 
-        }
-        this.props.rootStore.ui.addNewSplit();  
-        this.props.rootStore.ui.addNewSplitColumn(this.props.rootStore.ui.newSplitName, this.props.rootStore.ui.preSelectGrp);
+        } 
+        this.props.rootStore.ui.addNewSplitColumn();
     }
     render(){ 
         const alertClass = 'alert alert-warning ' + (this.props.rootStore.ui.hideAlertMsg ? 'hide' : ''); 

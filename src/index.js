@@ -3,9 +3,6 @@ import ReactDOM from 'react-dom';
 import { Provider } from 'mobx-react';
 import './index.css';
 import App from './App';
-
-import dataStore from './models/DataStore';
-import uiStore from './models/UIStore';
 import rootStore from './models/RootStore';
 
 //import registerServiceWorker from './registerServiceWorker';
