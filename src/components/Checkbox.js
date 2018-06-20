@@ -6,7 +6,7 @@ class Checkbox extends Component{
         this.props.onChange(this.props.rowIndex);    
     } 
     render(){
-        return <div className={'pretty p-default p-round'}>
+        return <div className={'pretty p-default p-round'} data-test="component-checkbox">
             <input type='checkbox' checked={this.props.status} onChange={this.handleCheck.bind(this)} />
             <div className="state p-primary">
                 <label></label>

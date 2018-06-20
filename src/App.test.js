@@ -4,8 +4,6 @@ import {findByTestAttr} from './tests/testUtils';
  
 import App from './App'; 
 
-
-
 const setup = () => {
     const store = {
       data: {},
