@@ -46,7 +46,7 @@ class App extends Component {
                 ); 
         } 
         return (
-            <div className="App row" onClick={this.handleOverlay.bind(this)}>
+            <div className="App row" data-test="component-app" onClick={this.handleOverlay.bind(this)}>
                 <div className="col-md-12">
                     <div className="control-buttons pull-right">
                         <button className="btn" onClick={this.showAllSplits.bind(this)}>Show All</button>

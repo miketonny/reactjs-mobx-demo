@@ -12,8 +12,8 @@ import rootStore from './models/RootStore';
 // };
 
 ReactDOM.render((
-    <Provider rootStore={new rootStore()}>
-    <App />
+    <Provider  rootStore={new rootStore()}>
+        <App />
     </Provider>), 
 document.getElementById('root')); 
 //registerServiceWorker();
