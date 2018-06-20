@@ -37,7 +37,7 @@ class Column extends Component{
         }else{
             header = <div></div>; // first two columns empty header
         }
-        return  <td className={hide}> 
+        return  <td className={hide} data-test='component-data-column'> 
                 <div>{header}</div>
                 <div>{toggles}</div>
                 <div>{
