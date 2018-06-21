@@ -8,7 +8,8 @@ import { inject, observer } from 'mobx-react';
 class Table extends Component{
     render(){
         const columns = this.props.rootStore.data.data;  
-        return  <div className = 'col-md-10' ><table id='test-table' className='table'>
+        return  <div className = 'col-md-10' >
+        <div><table id='test-table' className='table'>
             <tbody>
                 <tr>
                     {columns.map((col, i) => {
@@ -19,7 +20,7 @@ class Table extends Component{
                     })}
                 </tr>
             </tbody>
-        </table></div>;
+        </table></div></div>;
     }
 }
 

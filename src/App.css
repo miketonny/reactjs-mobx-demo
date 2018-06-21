@@ -224,9 +224,14 @@
   padding: 0;
 }
  
-.App>.col-md-10{
+.App>.col-md-10>div{
   overflow-x:auto;
+  margin-left: 18em;
 } 
+.App>.col-md-10{
+  padding-left: 0;
+}
+
 #test-table .hide-column{
   display: none;
 }
@@ -254,11 +259,18 @@
 #test-table tbody td:first-child{
   min-width: 18em;
   width: 18em;
+  position: absolute;
+  display:inline-block;
+  left: 0;
 }
 #test-table tbody td:first-child>div:nth-child(3)>div{
   border-right: 1px solid black;
   border-left: 1px solid black;
   padding:0;
+}
+
+#test-table tbody td:nth-child(2){
+  margin-left:18em !important;
 }
 
 #test-table tbody td:first-child>div:nth-child(3)>div:last-child>div:first-child{

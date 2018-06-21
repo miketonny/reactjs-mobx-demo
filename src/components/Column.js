@@ -32,10 +32,13 @@ class Column extends Component{
         const toggles = <div className='col-sm-12'><ToggleButton data-test='column-start-button' text='start' status = {this.props.colStatus}  toggle={this.startStop.bind(this)}>start</ToggleButton>
         <ToggleButton data-test='column-stop-button'  text='stop' status = {this.props.colStatus} toggle={this.startStop.bind(this)}/></div>;
         if(type === ColumnType.Trim){
-            header = <div data-test='column-header-trim'><span className="col-sm-3" onClick={this.nextTrim.bind(this)}>
-            <i className="fas fa-check"  ></i></span><span className="col-sm-6">{title}</span><span className="col-sm-3"></span></div>;
+            header = <div data-test='column-header-trim'>
+            <span className="col-sm-8">{title}</span><span className="col-sm-4" onClick={this.nextTrim.bind(this)}><u>End</u>
+            <i className="fas fa-check"  ></i></span>
+            </div>;
         }else if(type === ColumnType.Split){
-            header = <div data-test='column-header-split'><span className="col-sm-3"><i className="fas fa-eye" ></i></span><span className="col-sm-6">{title}</span><span className="col-sm-3" onClick={this.hideSplit.bind(this)}><i className="fas fa-times" ></i></span></div>; //split cant complete...
+            header = <div data-test='column-header-split'><span className="col-sm-8">{title}</span>
+            <span className="col-sm-4" onClick={this.hideSplit.bind(this)}><u>End</u><i className="fas fa-check" ></i></span></div>; //split cant complete...
         }else{
             header = <div></div>; // first two columns empty header
         }
