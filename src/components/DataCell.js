@@ -6,7 +6,7 @@ class DataCell extends Component{
         this.props.click(this.props.rowIndex);   
     } 
     render(){
-        return <div key={this.props.colIndx} onClick={this.handleClick.bind(this)} className={this.props.class}>{this.props.text}</div>;
+        return <div data-test='component-data-cell' key={this.props.colIndx} onClick={this.handleClick.bind(this)} className={this.props.class}>{this.props.text}</div>;
     }
 }
 

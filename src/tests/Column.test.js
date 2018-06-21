@@ -2,11 +2,14 @@ import React from 'react';
 import {shallow, mount} from 'enzyme'; 
 import {findByTestAttr, fakeStore} from './testUtils';
 import {ColumnStatus, ColumnType} from '../models/Enum';
-import Column from '../components/Column';
+import Column from '../components/Column'; 
 
-describe('data column with trim/split', () => {
+
+describe('data column with trim', () => {
     const toggleFn = jest.fn();
+    const cellCheck = jest.fn();
     let wrapper;
+    const rowIndx = 1;
     beforeEach(() => {
         let store = fakeStore;
         store.data.athletes = [
@@ -17,18 +20,19 @@ describe('data column with trim/split', () => {
             wrapper.setProps({colStatus: ColumnStatus.Processing});
             toggleFn(); //fake test function
         });
-        store.ui.checkOneRow = (indx) => jest.fn(() => {
-                wrapper.setProps({data: [{
-                    select: true, 
-                    status: 'Not Started'
-                }],
-            });
+        store.ui.checkOneRow = cellCheck;
+        store.ui.showNextTrim = jest.fn(() => {
+            wrapper.setProps({show: false});
+
         });
 
         const setup = (props) => { 
             //fake prop data passed from parent component..
-            const setupProps = {
+            let setupProps = {
                 data: [{
+                    select: false, 
+                    status: 'Not Started'
+                },{
                     select: false, 
                     status: 'Not Started'
                 }],
@@ -64,18 +68,36 @@ describe('data column with trim/split', () => {
         // known issue Enzyme #386 expect(toggleFn).toHaveBeenCalledTimes(0);
     });
 
-    // test('clicking on athlete cell fires row selection event', () => {
-    //     const cell = findByTestAttr(wrapper, 'component-cell'); 
-    //     wrapper.instance().cellClicked(0); 
-    //     expect(cell.hasClass('row-checked')).toBeTruthy();
-    // });
+    test('clicking on athlete cell fires row selection event', () => {
+        const cells = findByTestAttr(wrapper, 'component-cell'); 
+        wrapper.instance().cellClicked(rowIndx);  
+        expect(cellCheck).toHaveBeenCalledTimes(1);
+        // //mock updated props, child props cant be updated with enzyme, forbidded
+        // wrapper.setProps({data: [{
+        //     select: false, 
+        //     status: 'Not Started'
+        // },{
+        //     select: true, 
+        //     status: 'Not Started'
+        //     }],
+        // });
+        // wrapper.instance().forceUpdate();
+        // console.log(cells.at(rowIndx).debug());
+        // expect(cells.at(rowIndx).hasClass('row-checked')).toBeTruthy();
+    });
 
-    test('click red x on header cell fires hide split event', () => {
-
+    test('click end on header cell fires end trim event', () => {
+        const hideTrim = findByTestAttr(wrapper, 'column-header-trim');
+        expect(hideTrim.length).toBe(1);
+        wrapper.instance().nextTrim();
+        wrapper.update();
+        //column shall be hidden after click 
+        expect(wrapper.find('td').hasClass('hide-column')).toBeTruthy();
     });
     
-    test('click green tick on header cell fires end trim event', () => {
-
+    test('click end on header cell should not fire hide split event as its a trim', () => {
+        const hideSplit = findByTestAttr(wrapper, 'column-header-split');
+        expect(hideSplit.length).toBe(0);
     });
     
 

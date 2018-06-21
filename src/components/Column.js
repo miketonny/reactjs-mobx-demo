@@ -49,7 +49,7 @@ class Column extends Component{
                     data.map((d,i) => {
                         let className = d.status === 'Running'? 'running' : d.status === 'Stopped'? 'stopped': d.status === 'Not Started' ? 'italic' : '';
                         let checkClass = d.select === true ? 'row-checked' : '';
-                        return <DataCell data-test='component-cell'  key={i} rowIndex={i} click={this.cellClicked.bind(this)} class={`${className} ${checkClass}`} text={d.status}/>;
+                        return <DataCell  data-test='component-cell' select = {d.select}   key={i} rowIndex={i} click={this.cellClicked.bind(this)} class={`${className} ${checkClass}`} text={d.status}/>;
                     })}
                 </div>
                 </td>;
