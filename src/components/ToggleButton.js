@@ -26,9 +26,9 @@ class ToggleButton extends Component{
                 break;
         }
         if(this.props.text==='start'){
-            return <button className="btn toggle-button" onClick={this.handleClick.bind(this)} disabled={startDisabled}><i className="fas fa-play"></i></button>
+            return <button data-test="button-toggle-start" className="btn toggle-button" onClick={this.handleClick.bind(this)} disabled={startDisabled}><i className="fas fa-play"></i></button>
         }else{
-            return <button className="btn toggle-button" onClick={this.handleClick.bind(this)} disabled={endDisabled}><i className="fas fa-stop"></i></button>
+            return <button data-test="button-toggle-stop" className="btn toggle-button" onClick={this.handleClick.bind(this)} disabled={endDisabled}><i className="fas fa-stop"></i></button>
         } 
     }
 }
