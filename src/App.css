@@ -40,7 +40,7 @@
 }
 .group-box>.panel-body>.btn{
   border:1px solid black;
-  height: 50px;
+  height: 2em;
   width:100%;
   margin-bottom: 5px;
 }
@@ -85,9 +85,7 @@
 } */
  
 
-
-  .table thead .col-sm-3, .table thead .col-sm-6 {
-    padding: 0; }
+ 
   .table thead > tr {
     border: none; }
     .table thead > tr th {
@@ -140,7 +138,7 @@
 .control-buttons>.btn{
   border: 1px solid black;
   margin: 10px;
-  height: 40px;
+  height: 2em;
 }
 
 
@@ -167,7 +165,7 @@
   border: 1px solid black;
   background-color: #66CC00;
   color: black;
-  height: 40px;
+  height: 2em;
   width: 150px;
 }
 
@@ -245,7 +243,7 @@
 #test-table td {
   border: none !important;
 }
-#test-table .col-sm-3, .col-sm-6{
+#test-table .col-sm-4, .col-sm-8{
   padding:0;
   white-space: nowrap;
 }
@@ -259,8 +257,7 @@
 #test-table tbody td:first-child{
   min-width: 18em;
   width: 18em;
-  position: absolute;
-  display:inline-block;
+  position: absolute; 
   left: 0;
 }
 #test-table tbody td:first-child>div:nth-child(3)>div{
@@ -300,23 +297,11 @@
   border-right: 0.5px solid black;
   border-bottom: 1px solid black;
 }
-#test-table tbody td:nth-child(2)>div:first-child { 
-  border-left: 0.5px solid black;
-  border-top: 0.5px solid black;
-  border-right: 0.5px solid;
-  margin-right: -0.5px;
-}
-#test-table tbody td:nth-child(n+3)>div:first-child {  
-  border-top: 0.5px solid black;
-  border-right: 0.5px solid;
-  border-left: 0.5px solid;
-  margin-left: -0.5px;
-  margin-right: -0.5px;
-}
+
 #test-table td:first-child .btn{
   border: 1px solid black;
-  width: 12em;
-  height: 2.5em;
+  width: 8em;
+  height: 2em;
 }
 
 #test-table td:first-child>div:nth-child(3)>div>div:nth-child(2){
@@ -324,6 +309,15 @@
 }
 #test-table td:nth-child(n+2)>div:nth-child(3)>div{
   cursor: pointer;
+}
+
+#test-table .col-sm-4, #test-table .col-sm-8{
+  border-left: 1px solid;
+  border-top: 1px solid; 
+}
+
+#test-table .col-sm-4 u{
+  margin-right: 5px;
 }
 
 #test-table td:nth-child(n+2) .btn{
