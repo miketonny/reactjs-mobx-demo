@@ -8,13 +8,14 @@ export default class UIStore {
     @observable showEndTrim = false;
     @observable sessionID = '';
     @observable sessionStatus = 'Running';
+    @observable unitsConnected = '5';
     @observable loading = true;
     @observable groupSelectedOption = 1;
     @observable newSplitName = '';
     @observable preSelectGrp = '';
     @observable hideAlertMsg = true;
     @observable currentTrimName = '';
-    @observable formLocked = false;
+    @observable formLocked = false; 
 
     constructor(rootStore){
         this.root = rootStore;
