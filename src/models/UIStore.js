@@ -14,6 +14,7 @@ export default class UIStore {
     @observable preSelectGrp = '';
     @observable hideAlertMsg = true;
     @observable currentTrimName = '';
+    @observable formLocked = false;
 
     constructor(rootStore){
         this.root = rootStore;
@@ -182,4 +183,10 @@ export default class UIStore {
         
     }
 
+    //live stream section
+    @action
+    formLocking(){ 
+        this.root.data.lockForm(this.formLocked);
+        this.formLocked = !this.formLocked; //set status after locking
+    }
 }

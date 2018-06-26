@@ -25,6 +25,7 @@ export const fakeStore = {
     },
     ui: {
         toggleStartStop:{} ,
-        checkOneRow: {}
+        checkOneRow: {},
+        formLocking: {}
     }, 
 }

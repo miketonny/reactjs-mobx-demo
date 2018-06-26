@@ -276,4 +276,11 @@ export default class DataStore {
             }).catch((err) => console.log(err)); 
            }
     }
+
+
+    //live stream section
+    @action
+    lockForm(lock){
+        //send locking form info to server....
+    }
 }
