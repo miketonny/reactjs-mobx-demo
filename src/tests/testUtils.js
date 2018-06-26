@@ -27,6 +27,10 @@ export const fakeStore = {
         toggleStartStop:{} ,
         checkOneRow: {},
         formLocking: {},
-        sessionStatus: 'Running'
+        sessionStatus: 'Running', 
+        unitsConnected: 15,
+        currentTable: 'Metric',
+        tabSelectionChanged:{},
+        showTableColumnSelection: {}
     }, 
 }

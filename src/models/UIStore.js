@@ -16,6 +16,9 @@ export default class UIStore {
     @observable hideAlertMsg = true;
     @observable currentTrimName = '';
     @observable formLocked = false; 
+    @observable currentTable = 'Metric';
+    @observable showMetricsModal = false;
+    @observable showProgressiveModal = false;
 
     constructor(rootStore){
         this.root = rootStore;
@@ -79,6 +82,8 @@ export default class UIStore {
         if (modal !== 'undefined' && e.target === modal) {
                 this.showAddSplit = false;
                 this.showEndTrim = false;
+                this.showMetricsModal = false;
+                this.showProgressiveModal = false;
         }
     }
 
@@ -189,5 +194,31 @@ export default class UIStore {
     formLocking(){ 
         this.root.data.lockForm(this.formLocked);
         this.formLocked = !this.formLocked; //set status after locking
+    }
+
+    
+    //depending on which radio button is currently selected, table display will change accordingly
+    @action
+    tabSelectionChanged(selection){
+        switch(selection){
+            case "1":
+                this.currentTable = 'Metric';
+                break;
+            case "2":
+                this.currentTable = 'Progress';
+                break;
+            case "3":
+                this.currentTable = 'LiveTag';
+                break;
+            default:
+            break;
+        } 
+    }
+
+    @action
+    showTableColumnSelection(){
+        if(this.currentTable === 'Metric') this.showMetricsModal = true;    
+        else if(this.currentTable === 'Progress') this.showProgressiveModal = true;
+        else return; //live tag do nothing when clicked..
     }
 }

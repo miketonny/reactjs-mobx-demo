@@ -5,38 +5,46 @@ import { inject, observer } from 'mobx-react';
 @observer
 export default class StreamControl extends Component{
 
-    render() {
+    radioSelected(e){  
+        this.props.rootStore.ui.tabSelectionChanged(e.target.value);
+    }
+
+    handleModalBtnClick(){
+        this.props.rootStore.ui.showTableColumnSelection();
+    }
+    
+    render() { 
         return(
-            <div id="streamControl" class="col-md-12" data-test='stream-control-component'>
-                <div class="col-lg-5 col-md-7 col-sm-11">
-                    @*header*@
-                    <div class="col-sm-3">VX Live Status</div>
-                    <div class="col-sm-3">Units Connected</div>
-                    <div class="col-sm-3"></div>
-                    <div class="col-sm-3">Table Type</div>
-                    @*row*@
-                    <div class="col-sm-3 status" data-test="stream-status">{this.props.rootStore.ui.sessionStatus}</div>
-                    <div class="col-sm-3 unit-connected" data-test="stream-units-connected">{this.props.rootStore.ui.unitsConnected}<label class="text-center"></label></div>
-                    <div class="col-sm-3 text-center">
-                        <button id="MetricSelection" class="btn btn-default " data-toggle="modal" data-target="#allMetricsModal">Metrics</button>
-                        <button id="MonitoredMetrics" class="btn btn-default" data-toggle="modal" data-target="#monitoredModal">Monitored Metrics</button>
+            <div id="streamControl" className="col-md-12" data-test='stream-control-component'>
+                <div className="col-lg-5 col-md-7 col-sm-11">
+                    <div className="col-sm-3">VX Live Status</div>
+                    <div className="col-sm-3">Units Connected</div>
+                    <div className="col-sm-3"></div>
+                    <div className="col-sm-3">Table Type</div>
+                    <div className="col-sm-3 status" data-test="stream-status">{this.props.rootStore.ui.sessionStatus}</div>
+                    <div className="col-sm-3 unit-connected" data-test="stream-units-connected">{this.props.rootStore.ui.unitsConnected}<label className="text-center"></label></div>
+                    <div className="col-sm-3 text-center">
+                        <button data-test="stream-control-modal-button" onClick={this.handleModalBtnClick.bind(this)} >{this.props.rootStore.ui.currentTable} </button>
                     </div>
-                    <div class="col-sm-3 types">
-                        <ul class="col-sm-12" data-toggle="buttons">
-                            <li class="radio col-sm-6">
-                                <input type="radio" id="q156" name="rb" value="1" />All Metrics
+                    <div className="col-sm-3 types">
+                        <ul className="col-sm-12" data-toggle="buttons">
+                            <li className="radio col-sm-6">
+                                <input type="radio" id="q156" value="1"
+                                 checked={this.props.rootStore.ui.currentTable==='Metric'? true: false}  onChange={this.radioSelected.bind(this)}/>All Metrics
                             </li>
-                            <li class="radio col-sm-6">
-                                <input type="radio" id="q157" name="rb" value="2" />Progress
+                            <li className="radio col-sm-6">
+                                <input type="radio" id="q157" value="2" checked={this.props.rootStore.ui.currentTable==='Progress'? true: false}
+                                data-test="progress-radio" onChange={this.radioSelected.bind(this)} />Progress
                             </li>
-                            <li class="radio col-sm-6">
-                                <input type="radio" id="q158" name="rb" value="3" />Trim/Split
+                            <li className="radio col-sm-6">
+                                <input type="radio" id="q158" value="3" 
+                                checked={this.props.rootStore.ui.currentTable==='LiveTag'? true: false} onChange={this.radioSelected.bind(this)} />Trim/Split
                             </li>
                         </ul>
                     </div>
                 </div>
 
-            <div id="connectionWarning" class="col-sm-12 text-center"><p class="alert-danger">connection to server is slow...</p></div>
+            <div id="connectionWarning" className="col-sm-12 text-center"><p className="alert-danger">connection to server is slow...</p></div>
         </div>
         );
     }

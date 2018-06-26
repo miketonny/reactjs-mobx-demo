@@ -10,7 +10,7 @@ class StreamHeader extends Component{
     }
     render() {
         return <div data-test='header-component'>
-            <img />
+            <img alt=''/>
             <div data-test='session-idtag'>{this.props.sessionID}</div>
             <div> 
                 <div data-test='group-selection'></div>
