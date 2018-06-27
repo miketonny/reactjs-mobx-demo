@@ -8,6 +8,8 @@ export default class DataStore {
     @observable statusGroups = [];
     @observable positions = [];
     @observable modalGrps = [];
+    @observable metricAthletes = [];
+    @observable allMetricData = [];
     athletes = [];
     splitNames = [];
 
@@ -18,6 +20,18 @@ export default class DataStore {
         this.splitNames.push({ 'value': 'Split 2', 'label': 'Split 2' });
         this.splitNames.push({ 'value': 'Split 3', 'label': 'Split 3' });
         this.splitNames.push({ 'value': 'Drill', 'label': 'Drill' });
+        this.allMetricData=[{title: 'sig', name: 'SignalStrength', data:[], show:true}, {title: 'sticker', name:'sticker', data: [], show:true},
+        {title: 'Athlete', name:'Athlete', data:[], show:true}, {title: 'Position', name:'Position', data:[], show:true}, {title: 'Heart Rate', name:'HR', data:[], show:true},
+        {title: 'Total Distance', name:'Distance', data:[], show:true}, {title: 'Total Sprints', name:'Sprints', data:[], show:true},  {title: 'HR Hi Dur', name:'HiintHRDuration', data:[], show:true},
+        {title: 'HR Hi Dist', name:'HiintHRDistance', data:[], show:true},{title: 'Sp Hi Dur', name:'HiintSpDuration', data:[], show:true},
+        {title: 'Sp Hi Dist', name:'HiintSpDistance', data:[], show:true},{title: 'Energy Cons.', name:'EC', data:[], show:true}, 
+        {title: 'Total Duration', name:'Duration', data:[], show:true},{title: 'Avg Speed', name:'AvgSpeed', data:[], show:true},
+        {title: 'Max Speed', name:'MaxSpeed', data:[], show:true},{title: 'Avg HR', name:'AvgHR', data:[], show:true},
+        {title: 'Max HR', name:'MaxHR', data:[], show:true},{title: 'Jump Rate', name:'JumpRate', data:[], show:true},
+        {title: 'Jumps', name:'Jumps', data:[], show:true},{title: 'Impact Rate', name:'ImpactRate', data:[], show:true},   
+        {title: 'Body Impacts', name:'BodyImpacts', data:[], show:true},{title:  'Distance Rate', name:'DistanceRate', data:[], show:true},
+        {title: 'StatsGroup', name:'StatsGroup', data:[], show:true},{title: 'PositionalGroup', name:'PositionalGroup', data:[], show:true},
+        {title: 'type', name:'type', data:[], show:true}];
     }
 
    //digest the api returned data ========================================================================
@@ -37,6 +51,18 @@ export default class DataStore {
             this.getAllGroups();
             this.athletes = aths;
             this.root.ui.loading = false;
+        });
+    }
+
+    digestMetricAthletes(){
+        if(this.metricAthletes.length===0) return; 
+        //get column data, loop through all athletes returned from server, then map each athlete's property with data tables column
+        //and assign them into each column data array..
+        this.metricAthletes.forEach((ath) => {
+            Object.entries(ath).forEach(([key, value]) => {
+                const col = this.allMetricData.find(col => col.name === key);
+                if(col!== null) col.data.push(value);
+            });
         });
     }
     

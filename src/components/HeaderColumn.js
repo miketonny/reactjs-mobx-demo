@@ -15,7 +15,7 @@ class HeaderColumn extends Component{
     }
     render(){
         const data = this.props.data;
-        return   <td>
+        return   <div>
         <div></div>
         <div><button className="btn" onClick={this.checkAll.bind(this)}>Select All</button></div>
         <div>{
@@ -26,7 +26,7 @@ class HeaderColumn extends Component{
                     <div className='col-sm-9'><DataCell rowIndex={i}  click={this.handleCheck.bind(this)} class={checkClass} text={d.name}/></div>
                     </div>;
             })}</div>
-        </td>;
+        </div>;
     }
 }
 

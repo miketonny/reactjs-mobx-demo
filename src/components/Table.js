@@ -13,10 +13,10 @@ class Table extends Component{
             <tbody>
                 <tr>
                     {columns.map((col, i) => {
-                        if(i === 0) return <HeaderColumn key={i} data={col.data}/>;
-                        else return <Column key={i} colStatus = {col.status} show = {col.show}
+                        if(i === 0) return <td><HeaderColumn key={i} data={col.data}/></td>;
+                        else return <td><Column key={i} colStatus = {col.status} show = {col.show}
                         colType = {col.type} title = {col.title} data = {col.data}
-                        />;
+                        /></td>;
                     })}
                 </tr>
             </tbody>

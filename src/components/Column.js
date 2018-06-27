@@ -42,7 +42,7 @@ class Column extends Component{
         }else{
             header = <div></div>; // first two columns empty header
         }
-        return  <td className={hide} data-test='component-data-column'> 
+        return  <div className={hide} data-test='component-data-column'> 
                 <div>{header}</div>
                 <div>{toggles}</div>
                 <div>{
@@ -52,7 +52,7 @@ class Column extends Component{
                         return <DataCell  data-test='component-cell' select = {d.select}   key={i} rowIndex={i} click={this.cellClicked.bind(this)} class={`${className} ${checkClass}`} text={d.status}/>;
                     })}
                 </div>
-                </td>;
+                </div>;
  
     }
 

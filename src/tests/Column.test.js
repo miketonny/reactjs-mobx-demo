@@ -91,8 +91,8 @@ describe('data column with trim', () => {
         expect(hideTrim.length).toBe(1);
         wrapper.instance().nextTrim();
         wrapper.update();
-        //column shall be hidden after click 
-        expect(wrapper.find('td').hasClass('hide-column')).toBeTruthy();
+        //column shall be hidden after click  
+        expect(wrapper.childAt(0).hasClass('hide-column')).toBeTruthy();
     });
     
     test('click end on header cell should not fire hide split event as its a trim', () => {
