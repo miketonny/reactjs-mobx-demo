@@ -1,5 +1,4 @@
-import React, { Component } from 'react'; 
-import { inject, observer } from 'mobx-react';
+import React, { Component } from 'react';
  
 export default class MetricDataColumn extends Component{ 
     render() { 
