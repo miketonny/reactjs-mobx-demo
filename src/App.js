@@ -1,5 +1,6 @@
 import React, { Component } from 'react'; 
 import { inject, observer } from 'mobx-react';
+import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
 import './App.css';
 // import TagTable from './TagTable';
 import Form from './components/Form';
@@ -21,15 +22,10 @@ class App extends Component {
     /*
     Component state change events =====================================================================================
     */
-    // componentWillReceiveProps(nextProps){
-    //     console.log(nextProps.sessionStatus);
-    //     //this.setState({sessionStatus:nextProps.sessionStatus});
-    // }
-
     //API looping call =============
     componentDidMount() {
         //api call to fetch athlete data from server DB every 5 sec............  
-        setInterval(() => this.props.rootStore.data.getData(), 5000);
+        //setInterval(() => this.props.rootStore.data.getData(), 5000);
     }
 
     handleAddSplit(){
@@ -51,7 +47,7 @@ class App extends Component {
                 <div id="tableLoading" className="text-center loading-spinner spinner"><span>Loading please hold...</span>
                 </div>
                 ); 
-        } 
+        };
         let tbl;
         switch(this.props.rootStore.ui.currentTable){
             case 'Metric':
@@ -80,21 +76,20 @@ class App extends Component {
                 break;
         }
         return (
-
-            <div className="App row" data-test="component-app" onClick={this.handleOverlay.bind(this)}>
-                <Header />
-                <Control />
-                {tbl}
-                <Modal show={this.props.rootStore.ui.showAddSplit} 
-                children={<Form />} />
-                <Modal show={this.props.rootStore.ui.showEndTrim} 
-                children={<EndTrimForm name={this.props.rootStore.ui.currentTrimName}/>} />
-                <Modal show={this.props.rootStore.ui.showMetricsModal}
-                children={<AllMetricSelection />}/>
-                <Modal show={this.props.rootStore.ui.showProgressiveModal}
-                children={<ProgMetricSelection />}/>
-            </div>
-        );
+                <div className="App row" data-test="component-app" onClick={this.handleOverlay.bind(this)}>
+                    <Header />
+                    <Control />
+                    {tbl}
+                    <Modal show={this.props.rootStore.ui.showAddSplit} 
+                    children={<Form />} />
+                    <Modal show={this.props.rootStore.ui.showEndTrim} 
+                    children={<EndTrimForm name={this.props.rootStore.ui.currentTrimName}/>} />
+                    <Modal show={this.props.rootStore.ui.showMetricsModal}
+                    children={<AllMetricSelection />}/>
+                    <Modal show={this.props.rootStore.ui.showProgressiveModal}
+                    children={<ProgMetricSelection />}/>
+                </div>
+                );
     }
 }
 

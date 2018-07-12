@@ -1,7 +1,7 @@
 import axios from 'axios';
 const _apiBaseUrl = 'https://vxapi.azurewebsites.net/api';
 const _getAthletes = '/athletes/{sessionID}';
-const _periodApi = '/athletes/periods';
+const _periodApi = '/athletes/periods'; 
 /**
  * handles data transport layer functions ==============================================
  */
