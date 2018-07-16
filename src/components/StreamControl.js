@@ -44,7 +44,7 @@ export default class StreamControl extends Component{
                     </div>
                 </div>
 
-            <div id="connectionWarning" className="col-sm-12 text-center"><p className="alert-danger">connection to server is slow...</p></div>
+            {/* <div id="connectionWarning" className="col-sm-12 text-center"><p className="alert-danger">connection to server is slow...</p></div> */}
         </div>
         );
     }

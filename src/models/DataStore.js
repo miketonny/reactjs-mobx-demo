@@ -1,26 +1,40 @@
-import { observable, action } from "mobx";
-import {ColumnType, ColumnStatus } from '../models/Enum';
-import {fetchAthletes, updatePeriods} from './Transport';
+import { observable, action } from 'mobx';
+import { ColumnType, ColumnStatus } from './Enum';
+import { updatePeriods, checkSession } from './Transport';
 
-export default class DataStore { 
-    @observable data = []; 
+export default class DataStore {
+    @observable data = [];
+
     @observable positionalGroups = [];
+
     @observable statusGroups = [];
+
     @observable positions = [];
+
     @observable modalGrps = [];
+
     @observable metricAthletes = [];
+
     @observable allMetricData = [];
+
+    @observable session = {};
+
     athletes = [];
+
     splitNames = [];
 
-    constructor(rootStore){
-        this.root = rootStore; 
+    constructor(rootStore) {
+        this.root = rootStore;
         this.splitNames.push({ 'value': 'Running Drill', 'label': 'Running Drill' });
         this.splitNames.push({ 'value': 'Split 1', 'label': 'Split 1' });
         this.splitNames.push({ 'value': 'Split 2', 'label': 'Split 2' });
         this.splitNames.push({ 'value': 'Split 3', 'label': 'Split 3' });
         this.splitNames.push({ 'value': 'Drill', 'label': 'Drill' });
-        this.allMetricData=[{title: 'sig', name: 'SignalStrength', data:[], show:true}, {title: 'sticker', name:'sticker', data: [], show:true},
+       
+    }
+
+    initAthleteData() {
+        this.allMetricData.replace([{title: 'sig', name: 'SignalStrength', data:[], show:true}, {title: 'sticker', name:'sticker', data: [], show:true},
         {title: 'Athlete', name:'Athlete', data:[], show:true}, {title: 'Position', name:'Position', data:[], show:true}, {title: 'Heart Rate', name:'HR', data:[], show:true},
         {title: 'Total Distance', name:'Distance', data:[], show:true}, {title: 'Total Sprints', name:'Sprints', data:[], show:true},  {title: 'HR Hi Dur', name:'HiintHRDuration', data:[], show:true},
         {title: 'HR Hi Dist', name:'HiintHRDistance', data:[], show:true},{title: 'Sp Hi Dur', name:'HiintSpDuration', data:[], show:true},
@@ -31,41 +45,27 @@ export default class DataStore {
         {title: 'Jumps', name:'Jumps', data:[], show:true},{title: 'Impact Rate', name:'ImpactRate', data:[], show:true},   
         {title: 'Body Impacts', name:'BodyImpacts', data:[], show:true},{title:  'Distance Rate', name:'DistanceRate', data:[], show:true},
         {title: 'StatsGroup', name:'StatsGroup', data:[], show:true},{title: 'PositionalGroup', name:'PositionalGroup', data:[], show:true},
-        {title: 'type', name:'type', data:[], show:true}];
+        {title: 'type', name:'type', data:[], show:true}]);
     }
 
-   //digest the api returned data ========================================================================
-     getData(){
-        //get 2-dimentional array of athletes cols => data in each column
-        //first column in array has 'checkboxes/athlete name'         
-        let columns = [], rows = []; 
-        fetchAthletes(this.root.ui.session).then(res => {
-            let aths = res.data;             
-            if (!aths || aths.length === 0) return;
-            rows = this.processHeaderColumn(aths);
-            columns = this.processDataColumn(aths);
-            columns.unshift({title: 'header', type: ColumnType.Other, show: true, data: rows}); 
-            //compare and update data
-            this.updateDataStatus(columns);
-            //this.data = columns; 
-            this.getAllGroups();
-            this.athletes = aths;
-            this.root.ui.loading = false;
-        });
+    // digest the api returned data =================================================
+   @action
+    getLiveTagData(aths) {
+        // get 2-dimentional array of athletes cols => data in each column
+        // first column in array has 'checkboxes/athlete name'
+        let columns = [], rows = [];            
+        if (!aths || aths.length === 0) return;
+        rows = this.processHeaderColumn(aths);
+        columns = this.processDataColumn(aths);
+        columns.unshift({title: 'header', type: ColumnType.Other, show: true, data: rows}); 
+        // compare and update data
+        this.updateDataStatus(columns);
+        // this.data = columns;
+        this.getAllGroups();
+        this.athletes = aths;
+        this.root.ui.loading = false;
     }
 
-    digestMetricAthletes(){
-        if(this.metricAthletes.length===0) return; 
-        //get column data, loop through all athletes returned from server, then map each athlete's property with data tables column
-        //and assign them into each column data array..
-        this.metricAthletes.forEach((ath) => {
-            Object.entries(ath).forEach(([key, value]) => {
-                const col = this.allMetricData.find(col => col.name === key);
-                if(col!== null) col.data.push(value);
-            });
-        });
-    }
-    
     @action
     updateDataStatus(newData){
         if(this.data.length === 0) return this.data = newData ; //initial load...
@@ -304,9 +304,93 @@ export default class DataStore {
     }
 
 
-    //live stream section
+    // live stream section
     @action
-    lockForm(lock){
+    lockForm(lock) {
         //send locking form info to server....
+    }
+
+    @action
+    async validateSession() {
+        if (!this.root.ui.sessionID) return;
+        this.root.ui.warning = false; // reset warning text upon validation
+        // check whether session has admin code
+        const sessionArr = this.root.ui.sessionID.split('-');
+        let id = '';
+        [id] = sessionArr; // first id as the actual 6-digit session id
+        console.log(id);
+        try {
+            const session = await checkSession(id);
+            this.session = session.data;
+            // console.log(session);
+            // set session loaded and redirect to stream page.
+            if (session) this.root.ui.sessionLoaded = true;
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    @action
+    refreshAllMetricData(data) {
+        this.metricAthletes.replace(data);
+        if (this.metricAthletes.length === 0) return;
+        this.initAthleteData();
+        // get column data, loop through all athletes returned from server,
+        // then map each athlete's property with data tables column
+        // and assign them into each column data array..
+        const nameCol = this.allMetricData.find(a => a.name === 'Athlete');
+        const signalCol = this.allMetricData.find(a => a.name === 'SignalStrength');
+        const stickerCol = this.allMetricData.find(a => a.name === 'sticker');
+        const posCol = this.allMetricData.find(a => a.name === 'Position');
+        const hrCol = this.allMetricData.find(a => a.name === 'HR');
+        const distCol = this.allMetricData.find(a => a.name === 'Distance');
+        const sprintsCol = this.allMetricData.find(a => a.name === 'Sprints');
+        const hiintHRDurCol = this.allMetricData.find(a => a.name === 'HiintHRDuration');
+        const hiintHRDisCol = this.allMetricData.find(a => a.name === 'HiintHRDistance');
+        const hiintSpDurCol = this.allMetricData.find(a => a.name === 'HiintSpDuration');
+        const hiintSpDisCol = this.allMetricData.find(a => a.name === 'HiintSpDistance');
+        const ecCol = this.allMetricData.find(a => a.name === 'EC');
+        const durCol = this.allMetricData.find(a => a.name === 'Duration');
+        const avgSpdCol = this.allMetricData.find(a => a.name === 'AvgSpeed');
+        const maxSpdCol = this.allMetricData.find(a => a.name === 'MaxSpeed');
+        const avgHRCol = this.allMetricData.find(a => a.name === 'AvgHR');
+        const maxHRCol = this.allMetricData.find(a => a.name === 'MaxHR');
+        const jumpRateCol = this.allMetricData.find(a => a.name === 'JumpRate');
+        const jumpsCol = this.allMetricData.find(a => a.name === 'Jumps');
+        const impactRateCol = this.allMetricData.find(a => a.name === 'ImpactRate');
+        const impactsCol = this.allMetricData.find(a => a.name === 'BodyImpacts');
+        const distRateCol = this.allMetricData.find(a => a.name === 'DistanceRate');
+        const statGrpCol = this.allMetricData.find(a => a.name === 'StatsGroup');
+        const posGrpCol = this.allMetricData.find(a => a.name === 'PositionalGroup');
+    //    const posGrpCol = this.allMetricData.find(a => a.name === 'PositionalGroup');
+
+        this.metricAthletes.forEach((ath) => {
+            const name = `${ath.lastName}, ${ath.firstName}`;
+            nameCol.data.push(name);
+            signalCol.data.push(ath.liveMetric.signal);
+            stickerCol.data.push(ath.stickerNumber);
+            posCol.data.push(ath.positin);
+            hrCol.data.push(ath.liveMetric.hr);
+            distCol.data.push(ath.liveMetric.distance);
+            sprintsCol.data.push(ath.liveMetric.sprints);
+            hiintHRDurCol.data.push(ath.liveMetric.highIntensityHRDuration);
+            hiintHRDisCol.data.push(ath.liveMetric.highIntensityHRDistance);
+            hiintSpDurCol.data.push(ath.liveMetric.highIntensitySpeedDuration);
+            hiintSpDisCol.data.push(ath.liveMetric.highIntensitySpeedDistance);
+            ecCol.data.push(ath.liveMetric.energyConsumption);
+            durCol.data.push(ath.liveMetric.duration);
+            avgSpdCol.data.push(ath.liveMetric.avgSpeed);
+            maxSpdCol.data.push(ath.liveMetric.maxSpeed);
+            avgHRCol.data.push(ath.liveMetric.avgHR);
+            maxHRCol.data.push(ath.liveMetric.maxHR);
+            jumpRateCol.data.push(ath.liveMetric.jumpRate);
+            jumpsCol.data.push(ath.liveMetric.jumps);
+            impactRateCol.data.push(ath.liveMetric.impactRate);
+            impactsCol.data.push(ath.liveMetric.ibodyImpacts);
+            distRateCol.data.push((ath.liveMetric.distance / ath.liveMetric.duration).toFixed(2));
+            posGrpCol.data.push(ath.group);
+            statGrpCol.data.push(ath.gamingGroup);
+        });
+        this.root.ui.loading = false;
     }
 }

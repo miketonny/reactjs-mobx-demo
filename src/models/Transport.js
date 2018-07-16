@@ -28,3 +28,12 @@ export function updatePeriods(aths, method) {
         body: JSON.stringify(aths)
     });
 }
+
+export async function checkSession(sessionId) {
+    try {
+        return axios(`/api/valsession/${sessionId}`);
+    } catch (e) {
+        console.log(e);
+        return null;
+    }
+}

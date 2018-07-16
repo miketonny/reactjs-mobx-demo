@@ -10,7 +10,7 @@ class Modal extends Component{
         }
         return <div id='modal' className={showHideClassname}>
         <section className="modal-main">
-          {this.props.children} 
+          {this.props.inner} 
         </section>
       </div>
     }
